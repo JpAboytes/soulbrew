@@ -1,0 +1,163 @@
+# CLAUDE.md — Soulbrew
+
+Contexto para sesiones de Claude Code en este proyecto. Léelo antes de trabajar.
+
+## Qué es
+
+Soulbrew es una app web **iPad-first** para gestionar una cafetería: punto de venta (POS),
+inventario de insumos, catálogo de productos con recetas, clientes y programa de fidelización
+por puntos. Toda la UI está en **español**.
+
+## Stack
+
+- **React 18** + **Vite 5** (JS puro con JSX, sin TypeScript)
+- **Supabase** (`@supabase/supabase-js`) — auth, base de datos Postgres, Storage y RPC
+- **React Router v6** (rutas en `src/App.jsx`)
+- **Tailwind CSS 3** + **lucide-react** (íconos)
+- Sin librería de estado global: solo React Context (`AuthContext`) y `useState`/`useEffect`
+
+## Comandos
+
+```bash
+npm install        # instalar dependencias
+npm run dev        # desarrollo → http://localhost:5173
+npm run build      # build de producción (vite build → dist/)
+npm run preview    # previsualizar el build
+```
+
+No hay tests, ni ESLint/Prettier configurados, ni CI. No existe paso de typecheck.
+
+## ⚠️ Estructura de Git (importante)
+
+El repositorio Git **NO está en `soulbrew/`** sino en la carpeta padre (`C:\Users\Hp\Desktop\`).
+Por eso `git status` muestra cientos de archivos personales no relacionados (PDFs, otros proyectos,
+etc.). Al hacer commits, **agrega solo archivos dentro de `soulbrew/`** explícitamente por ruta —
+nunca uses `git add -A` / `git add .` desde la raíz. Rama de trabajo actual: `master`
+(existe también `Develop-JP`).
+
+## Variables de entorno
+
+`.env.local` (no versionado) con prefijo `VITE_`:
+
+```
+VITE_SUPABASE_URL=https://<proyecto>.supabase.co
+VITE_SUPABASE_ANON_KEY=<anon-key>
+```
+
+El cliente Supabase se crea en `src/lib/supabase.js`. Hay un MCP de Supabase configurado en
+`.mcp.json` (úsalo para inspeccionar/modificar el schema cuando sea necesario).
+
+## Arquitectura de archivos
+
+```
+src/
+  main.jsx              # entry; monta <App/> en #root
+  App.jsx              # rutas + AuthProvider
+  index.css           # Tailwind directives
+  lib/supabase.js     # cliente Supabase (singleton)
+  contexts/AuthContext.jsx   # sesión/usuario; useAuth()
+  components/
+    Layout.jsx        # sidebar de navegación (rutas protegidas) + badge de insumos críticos
+    ProtectedRoute.jsx # gate de sesión
+    ProductoCard.jsx  # tarjeta de producto en el POS
+    InsumoCard.jsx    # tarjeta de insumo en inventario
+    Toast.jsx         # notificación efímera
+  pages/
+    Login.jsx         # login + registro (Supabase Auth, email/password)
+    Vender.jsx        # POS: grid de productos + carrito + cliente + canje de puntos
+    Inventario.jsx    # insumos + restock
+    Productos.jsx     # CRUD de productos, toggle activo, recetas, subida de imagen
+    Clientes.jsx      # lista de clientes, detalle, historial y ajuste manual de puntos
+    FidelidadPublica.jsx # tarjeta pública de fidelización (ruta sin auth)
+```
+
+### Rutas
+
+| Ruta | Auth | Descripción |
+|------|------|-------------|
+| `/login` | pública | Login / registro |
+| `/fidelidad/:telefono` | pública | Tarjeta de fidelización del cliente (consulta por teléfono) |
+| `/vender` | protegida | Punto de venta (ruta por defecto tras login) |
+| `/inventario` | protegida | Insumos + restock |
+| `/productos` | protegida | Productos + recetas |
+| `/clientes` | protegida | Clientes + puntos |
+| `/asistente` | protegida | Chat con agente de IA (analítica vía n8n) |
+
+Las rutas protegidas se envuelven en `<ProtectedRoute>` → `<Layout>` (sidebar). `/` redirige a `/vender`.
+
+## Modelo de datos (Supabase Postgres)
+
+Inferido del código. Verifica con el MCP de Supabase antes de cambios de schema.
+
+- **insumos**: `id, nombre, unidad ('g'|'kg'|'ml'|'l'|'piezas'), stock_actual, stock_minimo, costo_unitario`
+  - "Crítico" = `stock_actual <= stock_minimo`; "bajo" = `<= stock_minimo * 1.5`
+- **restock**: `id, insumo_id, cantidad, costo_total, notas, created_by`
+  - Al registrar restock se inserta la fila **y** se actualiza `insumos.stock_actual` (en el cliente, no atómico)
+- **productos**: `id, nombre, descripcion, precio, categoria ('Bebidas'|'Alimentos'|'Postres'), imagen_url, activo`
+- **recetas**: `id, producto_id, insumo_id, cantidad` — relación producto↔insumo (clave única `producto_id,insumo_id`, se hace upsert)
+- **ventas**: `id, total, notas, created_by, cliente_id (nullable), created_at`
+- **venta_items**: `id, venta_id, producto_id, cantidad, precio_unitario`
+- **clientes**: `id, nombre, telefono (único, 10 dígitos), email, puntos_acumulados, visitas, created_at`
+- **puntos_historial**: `id, cliente_id, venta_id (nullable), puntos (+/-), concepto ('compra'|'canje'|'bono'|'ajuste'|...), created_at`
+
+### Storage
+- Bucket público **`productos`** para imágenes de producto (subida desde `Productos.jsx` → `uploadProductoImage`).
+
+### RPC
+- **`descontar_insumos_venta(p_venta_id)`** — descuenta inventario según las recetas de los productos vendidos. Se llama tras insertar la venta y sus items.
+
+### Funciones de analítica (para el agente de IA)
+Funciones `SECURITY DEFINER` de solo lectura que devuelven `jsonb`, concedidas **solo a
+`service_role`** (las consume n8n del lado servidor; el frontend NO las llama directo).
+Definidas en migraciones `analytics_functions` / `fix_analytics_resumen_ventas` /
+`analytics_grants_service_role_only`:
+`analytics_resumen_ventas`, `analytics_ventas_por_dia`, `analytics_ventas_por_hora`,
+`analytics_top_productos`, `analytics_margen_productos`, `analytics_productos_sin_receta`,
+`analytics_inventario_estado`, `analytics_clientes_top`, `analytics_fidelidad_resumen`.
+Detalle de parámetros en `docs/n8n-asistente.md`.
+
+## Lógica de negocio clave
+
+### Flujo de venta (`Vender.jsx > confirmarVenta`)
+1. Insert en `ventas` (con `total` ya con descuento, `cliente_id` opcional).
+2. Insert de `venta_items`.
+3. RPC `descontar_insumos_venta` para descontar inventario.
+4. Si hay cliente: actualiza puntos/visitas e inserta en `puntos_historial`.
+- Productos **sin receta** se venden igual, pero **no descuentan inventario** (se muestra advertencia "Sin receta").
+- Los pasos no son una transacción única; si un paso falla, los anteriores ya se ejecutaron.
+
+### Programa de puntos / fidelización
+- Se ganan **1 punto por cada $1** del total **sin descuento** (`Math.floor(total)`).
+- Canje: múltiplos de **100 pts = $10** de descuento. Máximo canjeable = `floor(puntos/100)*100`.
+- Historial registra `concepto`: `compra` (+), `canje` (−), y ajustes manuales (`bono`/`ajuste`).
+- La tarjeta pública (`/fidelidad/:telefono`) muestra puntos, progreso al siguiente tier (cada 100), y niveles: 100+ recompensa disponible, 300+ VIP.
+
+## Asistente de IA (página `/asistente`)
+
+Chat para preguntarle a un agente sobre ventas/productos/inventario/clientes.
+- **Frontend** (`src/pages/Asistente.jsx`): hace `POST` a `VITE_N8N_WEBHOOK_URL` con
+  `{ message, sessionId, userEmail }` y el JWT del usuario en `Authorization`. Pinta la
+  respuesta (`reply`/`output`/`text`/`message`/`answer`). `sessionId` se guarda en
+  `sessionStorage` para dar continuidad a la memoria del agente.
+- **Agente** vive en **n8n** (modelo **Claude / Anthropic**), conectado al mismo Supabase.
+  Llama las funciones de analítica (arriba) como herramientas usando el **service_role key**
+  (solo en n8n). Blueprint completo y system prompt en **`docs/n8n-asistente.md`**.
+- **Proyecto Supabase:** `euoltfaqmmshagxsosrc` (`Soulbrew`, región us-west-2).
+
+## Convenciones de UI / estilo
+
+- **iPad-first**: targets táctiles con `min-h-[44px]` (o más) en botones/inputs. Respétalo.
+- Paleta de marca (definida en `tailwind.config.js`, pero el código usa los hex directamente):
+  - `#2C1810` café oscuro (`coffee.dark`) · `#5C3317` (`coffee.medium`) · `#8B5A3C` (`coffee.light`)
+  - `#D4A853` dorado/acento (`gold`) · `#FAFAF7` crema/fondo (`cream`)
+- Patrones repetidos: modales con `fixed inset-0 bg-black/...backdrop-blur-sm`, tarjetas `rounded-2xl/3xl`,
+  spinners con `animate-spin border-[#D4A853] border-t-transparent`, toasts efímeros.
+- Manejo de errores actual: mayormente `alert(error.message)` en modales y `<Toast>`/banner en páginas. Es el patrón existente; mantenlo salvo que se pida mejorarlo.
+- Realtime: `Layout.jsx` se suscribe a cambios de la tabla `insumos` (Supabase channel) para el badge de insumos críticos.
+
+## Notas para trabajar
+
+- Idioma: nombres de variables/UI/commits en español, siguiendo el código existente.
+- Al añadir queries, sigue el patrón `const { data, error } = await supabase.from(...)...`.
+- El README describe páginas desactualizadas (no menciona Clientes/Fidelidad); esta CLAUDE.md es la referencia actual.
+- RLS: la app usa la anon key; las políticas de seguridad viven en Supabase. La ruta pública de fidelidad consulta `clientes`/`puntos_historial` sin sesión, así que esas tablas tienen lectura pública por teléfono.

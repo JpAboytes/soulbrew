@@ -1,0 +1,21 @@
+# Dependencias
+node_modules
+
+# Build
+dist
+
+# Variables de entorno / secretos (NUNCA subir)
+.env
+.env.*
+!.env.example
+
+# Config local de Claude Code
+.claude/settings.local.json
+
+# Sistema
+.DS_Store
+desktop.ini
+Thumbs.db
+
+# Editor
+.vs/

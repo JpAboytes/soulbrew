@@ -1,0 +1,39 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider } from './contexts/AuthContext'
+import ProtectedRoute from './components/ProtectedRoute'
+import Layout from './components/Layout'
+import Login from './pages/Login'
+import Inventario from './pages/Inventario'
+import Productos from './pages/Productos'
+import Vender from './pages/Vender'
+import Clientes from './pages/Clientes'
+import Asistente from './pages/Asistente'
+import FidelidadPublica from './pages/FidelidadPublica'
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/fidelidad/:telefono" element={<FidelidadPublica />} />
+
+          {/* Protected routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<Layout />}>
+              <Route path="/vender" element={<Vender />} />
+              <Route path="/inventario" element={<Inventario />} />
+              <Route path="/productos" element={<Productos />} />
+              <Route path="/clientes" element={<Clientes />} />
+              <Route path="/asistente" element={<Asistente />} />
+              <Route path="/" element={<Navigate to="/vender" replace />} />
+            </Route>
+          </Route>
+
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  )
+}
