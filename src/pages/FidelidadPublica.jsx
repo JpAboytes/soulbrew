@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { Coffee, Star, Trophy, Gift } from 'lucide-react'
+import { Coffee, Star, Trophy, Gift, Wallet } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
 function getLevel(puntos) {
@@ -12,6 +12,8 @@ function getLevel(puntos) {
 export default function FidelidadPublica() {
   const { telefono } = useParams()
   const [state, setState] = useState({ status: 'loading', cliente: null, historial: [], error: null })
+  const [walletLoading, setWalletLoading] = useState(false)
+  const [walletError, setWalletError] = useState(null)
 
   useEffect(() => {
     if (!telefono) {
@@ -122,6 +124,22 @@ export default function FidelidadPublica() {
   const level = getLevel(puntos)
   const LevelIcon = level.Icon
 
+  async function agregarAGoogleWallet() {
+    setWalletError(null)
+    setWalletLoading(true)
+    try {
+      const { data, error } = await supabase.functions.invoke('wallet-google-link', {
+        body: { telefono },
+      })
+      if (error) throw error
+      if (!data?.saveUrl) throw new Error('No se recibió el enlace de Google Wallet')
+      window.location.href = data.saveUrl
+    } catch (err) {
+      setWalletError(err.message || 'No se pudo generar la tarjeta')
+      setWalletLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#2C1810] py-8 px-4 flex justify-center">
       <div className="w-full max-w-sm">
@@ -223,6 +241,23 @@ export default function FidelidadPublica() {
             </p>
           )}
         </div>
+
+        <button
+          onClick={agregarAGoogleWallet}
+          disabled={walletLoading}
+          className="mt-5 w-full bg-[#D4A853] hover:bg-[#c49843] disabled:opacity-60 text-[#2C1810] font-bold py-4 rounded-2xl flex items-center justify-center gap-2 min-h-[52px] transition-colors"
+        >
+          {walletLoading ? (
+            <span className="animate-spin rounded-full h-5 w-5 border-2 border-[#2C1810] border-t-transparent" />
+          ) : (
+            <Wallet size={20} />
+          )}
+          {walletLoading ? 'Generando...' : 'Agregar a Google Wallet'}
+        </button>
+
+        {walletError && (
+          <p className="text-center text-red-300 text-xs mt-2">{walletError}</p>
+        )}
 
         <p className="text-center text-[#5C3317] text-xs mt-5 px-4">
           Presenta tu número en caja para canjear puntos

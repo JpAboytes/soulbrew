@@ -9,6 +9,14 @@ dist
 .env.*
 !.env.example
 
+# Llaves de service account de Google (NUNCA subir)
+**/soulbrew-*.json
+**/*service*account*.json
+scripts/wallet/sa.json
+
+# Páginas locales con tokens de save (NUNCA subir)
+scripts/wallet/*.html
+
 # Config local de Claude Code
 .claude/settings.local.json
 

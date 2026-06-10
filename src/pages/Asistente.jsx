@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Send, Sparkles, AlertTriangle, RotateCcw } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import Markdown from '../components/Markdown'
 
 const WEBHOOK_URL = import.meta.env.VITE_N8N_WEBHOOK_URL
 
@@ -159,13 +160,13 @@ export default function Asistente() {
                 </div>
               ) : (
                 <div
-                  className={`rounded-2xl px-4 py-3 text-sm max-w-[85%] whitespace-pre-wrap leading-relaxed ${
+                  className={`rounded-2xl px-4 py-3 text-sm max-w-[85%] ${
                     m.role === 'user'
-                      ? 'bg-[#2C1810] text-white'
-                      : 'bg-white border border-gray-100 text-[#2C1810] shadow-sm'
+                      ? 'bg-[#2C1810] text-white whitespace-pre-wrap leading-relaxed'
+                      : 'bg-white border border-gray-100 shadow-sm'
                   }`}
                 >
-                  {m.text}
+                  {m.role === 'user' ? m.text : <Markdown>{m.text}</Markdown>}
                 </div>
               )}
             </div>
