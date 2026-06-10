@@ -1,7 +1,12 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Plus, X, Search, Edit2, Star, ChevronDown, Minus } from 'lucide-react'
+import { Plus, X, Search, Edit2, Star, ChevronDown, Minus, QrCode } from 'lucide-react'
+import { QRCodeSVG } from 'qrcode.react'
 import { supabase } from '../lib/supabase'
 import Toast from '../components/Toast'
+
+// Base pública para los links de la tarjeta de fidelización (QR). En prod cae al origin
+// del sitio; en dev conviene definir VITE_PUBLIC_URL con la URL de producción.
+const PUBLIC_URL = import.meta.env.VITE_PUBLIC_URL || (typeof window !== 'undefined' ? window.location.origin : '')
 
 // ─── Ajuste manual de puntos ──────────────────────────────────────────────────
 
@@ -110,6 +115,7 @@ function ClienteModal({ cliente: clienteInicial, onClose, onUpdated }) {
   const [historialLoading, setHistorialLoading] = useState(true)
   const [totalGastado, setTotalGastado] = useState(null)
   const [showAjuste, setShowAjuste] = useState(false)
+  const [showQR, setShowQR] = useState(false)
 
   useEffect(() => {
     fetchHistorial()
@@ -250,7 +256,7 @@ function ClienteModal({ cliente: clienteInicial, onClose, onUpdated }) {
         </div>
 
         {/* Actions */}
-        <div className="px-6 py-3 border-b border-gray-100">
+        <div className="px-6 py-3 border-b border-gray-100 space-y-1">
           <button
             onClick={() => setShowAjuste(true)}
             className="flex items-center gap-2 text-sm font-medium text-[#D4A853] hover:text-[#c49843] min-h-[44px] transition-colors"
@@ -258,6 +264,34 @@ function ClienteModal({ cliente: clienteInicial, onClose, onUpdated }) {
             <Star size={16} />
             Ajustar puntos manualmente
           </button>
+
+          {cliente.telefono && (
+            <button
+              onClick={() => setShowQR(v => !v)}
+              className="flex items-center gap-2 text-sm font-medium text-[#2C1810] hover:text-[#5C3317] min-h-[44px] transition-colors"
+            >
+              <QrCode size={16} />
+              {showQR ? 'Ocultar tarjeta de fidelización' : 'Mostrar tarjeta de fidelización (QR)'}
+            </button>
+          )}
+
+          {showQR && cliente.telefono && (
+            <div className="flex flex-col items-center gap-2 py-3">
+              <div className="bg-white p-3 rounded-2xl border border-gray-100">
+                <QRCodeSVG value={`${PUBLIC_URL}/fidelidad/${cliente.telefono}`} size={180} />
+              </div>
+              <p className="text-xs text-gray-500 text-center max-w-[240px]">
+                El cliente escanea este QR para abrir su tarjeta y agregarla a Google Wallet.
+              </p>
+              <a
+                href={`${PUBLIC_URL}/fidelidad/${cliente.telefono}`}
+                target="_blank" rel="noopener noreferrer"
+                className="text-xs text-[#D4A853] font-medium underline break-all text-center"
+              >
+                {`${PUBLIC_URL}/fidelidad/${cliente.telefono}`}
+              </a>
+            </div>
+          )}
         </div>
 
         {/* Historial */}
