@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { Coffee, Star, Trophy, Gift, Wallet } from 'lucide-react'
+import { getNivel } from '@soulbrew/core'
 import { supabase } from '../lib/supabase'
 
-function getLevel(puntos) {
-  if (puntos >= 300) return { msg: '¡Cliente VIP! Gracias por tu preferencia', Icon: Trophy, color: '#D4A853' }
-  if (puntos >= 100) return { msg: '¡Ya tienes una recompensa disponible!', Icon: Gift, color: '#22c55e' }
-  return { msg: '¡Estás empezando tu aventura!', Icon: Star, color: '#8B5A3C' }
-}
+// Ícono de cada nivel (la lógica/umbrales viven en @soulbrew/core; la UI vive aquí).
+const NIVEL_ICON = { vip: Trophy, recompensa: Gift, inicio: Star }
 
 export default function FidelidadPublica() {
   const { telefono } = useParams()
@@ -121,8 +119,8 @@ export default function FidelidadPublica() {
   const puntos = cliente.puntos_acumulados
   const progressInTier = puntos % 100
   const recompensasDisponibles = Math.floor(puntos / 100)
-  const level = getLevel(puntos)
-  const LevelIcon = level.Icon
+  const level = getNivel(puntos)
+  const LevelIcon = NIVEL_ICON[level.nivel]
 
   async function agregarAGoogleWallet() {
     setWalletError(null)

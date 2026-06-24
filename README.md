@@ -1,71 +1,62 @@
 # Soulbrew — Sistema de Gestión de Cafetería
 
-App web iPad-first para gestión de inventario, productos y punto de venta.
+Monorepo (npm workspaces) con dos apps web que comparten un solo backend Supabase:
+
+- **`apps/pos`** — POS/admin iPad-first (con auth): ventas, inventario, productos, clientes,
+  reportes/corte de caja y asistente de IA.
+- **`apps/cliente`** — App pública del cliente (sin auth): tarjeta de fidelización + Google Wallet.
+- **`packages/core`** — código compartido (factory del cliente Supabase + lógica de fidelización).
 
 ## Stack
 
-- React 18 + Vite
-- Supabase (auth + base de datos)
-- React Router v6
-- Tailwind CSS
-- Lucide React
+- React 18 + Vite 5 · React Router v6 · Tailwind CSS 3 · Lucide React
+- Supabase (auth + Postgres + Storage + RPC) — un solo proyecto para ambas apps
 
 ## Setup
 
-### 1. Clonar e instalar dependencias
+### 1. Instalar dependencias (desde la raíz)
 
 ```bash
 npm install
 ```
 
+Instala todas las apps y paquetes con un único `node_modules` y lockfile.
+
 ### 2. Variables de entorno
 
-Copia `.env.example` a `.env.local` y completa con tus credenciales de Supabase:
+Cada app tiene su propio `.env.local`. Ver `.env.example` para el detalle:
+
+- `apps/pos/.env.local`: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_N8N_WEBHOOK_URL`,
+  (opcional) `VITE_PUBLIC_URL`.
+- `apps/cliente/.env.local`: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`.
+
+Las credenciales están en Supabase → **Settings → API**.
+
+### 3. Desarrollo
 
 ```bash
-cp .env.example .env.local
+npm run dev:pos        # POS     → http://localhost:5173
+npm run dev:cliente    # Cliente → http://localhost:5174
 ```
 
-```env
-VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
-VITE_SUPABASE_ANON_KEY=tu-anon-key
-```
-
-Las credenciales las encuentras en tu proyecto de Supabase en:
-**Settings → API → Project URL** y **anon public key**
-
-### 3. Base de datos en Supabase
-
-El schema ya debe estar aplicado (tablas: `insumos`, `restock`, `productos`, `recetas`, `ventas`, `venta_items`).
-
-Si necesitas aplicarlo manualmente, ejecuta el SQL del archivo `schema.sql` en el **SQL Editor** de Supabase.
-
-### 4. Correr en desarrollo
+### 4. Build de producción
 
 ```bash
-npm run dev
+npm run build          # ambas apps (→ apps/<app>/dist)
+npm run build:pos      # solo POS
+npm run build:cliente  # solo cliente
 ```
 
-Abre [http://localhost:5173](http://localhost:5173) en el navegador.
+## Deploy (Vercel)
 
-### 5. Build de producción
+Dos proyectos sobre el mismo repo, cada uno con su **Root Directory**:
 
-```bash
-npm run build
-```
+| Proyecto | Root Directory | Build | Output |
+|----------|----------------|-------|--------|
+| POS | `apps/pos` | `npm run build` | `dist` |
+| Cliente | `apps/cliente` | `npm run build` | `dist` |
 
-## Páginas
+Cada proyecto define sus propias variables de entorno y su dominio. Las Edge Functions
+(Google Wallet) viven en `supabase/functions`.
 
-| Ruta | Descripción |
-|------|-------------|
-| `/login` | Autenticación (login + registro) |
-| `/vender` | Punto de venta — carrito + confirmación |
-| `/inventario` | Gestión de insumos + restock |
-| `/productos` | Productos + recetas |
-
-## Flujo de venta
-
-1. El cajero selecciona productos desde el grid
-2. El carrito calcula el total automáticamente
-3. Al confirmar, se inserta la venta, los items, y se llama a `descontar_insumos_venta()` en Supabase para descontar el inventario según las recetas configuradas
-4. Si un producto no tiene receta, la venta se procesa igualmente con una advertencia visible
+> Para el contexto completo de arquitectura, modelo de datos y lógica de negocio, ver `CLAUDE.md`.

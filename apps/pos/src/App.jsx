@@ -7,8 +7,8 @@ import Inventario from './pages/Inventario'
 import Productos from './pages/Productos'
 import Vender from './pages/Vender'
 import Clientes from './pages/Clientes'
+import Reportes from './pages/Reportes'
 import Asistente from './pages/Asistente'
-import FidelidadPublica from './pages/FidelidadPublica'
 
 export default function App() {
   return (
@@ -17,7 +17,6 @@ export default function App() {
         <Routes>
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
-          <Route path="/fidelidad/:telefono" element={<FidelidadPublica />} />
 
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
@@ -26,6 +25,7 @@ export default function App() {
               <Route path="/inventario" element={<Inventario />} />
               <Route path="/productos" element={<Productos />} />
               <Route path="/clientes" element={<Clientes />} />
+              <Route path="/reportes" element={<Reportes />} />
               <Route path="/asistente" element={<Asistente />} />
               <Route path="/" element={<Navigate to="/vender" replace />} />
             </Route>

@@ -3,26 +3,18 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.45.0",
-    "lucide-react": "^0.400.0",
-    "qrcode.react": "^4.2.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-markdown": "^10.1.0",
-    "react-router-dom": "^6.24.0",
-    "remark-gfm": "^4.0.1"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.1",
-    "autoprefixer": "^10.4.19",
-    "postcss": "^8.4.39",
-    "tailwindcss": "^3.4.4",
-    "vite": "^5.3.1"
+    "dev": "npm run dev -w @soulbrew/pos",
+    "dev:pos": "npm run dev -w @soulbrew/pos",
+    "dev:cliente": "npm run dev -w @soulbrew/cliente",
+    "build": "npm run build -w @soulbrew/pos && npm run build -w @soulbrew/cliente",
+    "build:pos": "npm run build -w @soulbrew/pos",
+    "build:cliente": "npm run build -w @soulbrew/cliente",
+    "preview:pos": "npm run preview -w @soulbrew/pos",
+    "preview:cliente": "npm run preview -w @soulbrew/cliente"
   }
 }

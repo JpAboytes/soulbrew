@@ -4,86 +4,103 @@ Contexto para sesiones de Claude Code en este proyecto. Léelo antes de trabajar
 
 ## Qué es
 
-Soulbrew es una app web **iPad-first** para gestionar una cafetería: punto de venta (POS),
-inventario de insumos, catálogo de productos con recetas, clientes y programa de fidelización
-por puntos. Toda la UI está en **español**.
+Soulbrew es una cafetería gestionada con dos apps web que comparten un solo backend Supabase:
+el **POS/admin** (`apps/pos`, iPad-first, con auth) y la **app de cliente** (`apps/cliente`,
+pública, móvil: tarjeta de fidelización + Google Wallet). Toda la UI está en **español**.
 
 ## Stack
 
+- **Monorepo con npm workspaces**: `apps/pos`, `apps/cliente`, `packages/core`
 - **React 18** + **Vite 5** (JS puro con JSX, sin TypeScript)
-- **Supabase** (`@supabase/supabase-js`) — auth, base de datos Postgres, Storage y RPC
-- **React Router v6** (rutas en `src/App.jsx`)
-- **Tailwind CSS 3** + **lucide-react** (íconos)
-- Sin librería de estado global: solo React Context (`AuthContext`) y `useState`/`useEffect`
+- **Supabase** (`@supabase/supabase-js`) — auth, base de datos Postgres, Storage y RPC. **Un solo
+  proyecto** compartido por ambas apps (cliente creado vía el factory de `@soulbrew/core`)
+- **React Router v6** (rutas en `apps/<app>/src/App.jsx`)
+- **Tailwind CSS 3** + **lucide-react** (íconos); config de Tailwind/PostCSS por app
+- Sin librería de estado global: solo React Context (`AuthContext`, solo en el POS) y `useState`/`useEffect`
 
 ## Comandos
 
+Todos los comandos se corren **desde la raíz** del repo (workspaces):
+
 ```bash
-npm install        # instalar dependencias
-npm run dev        # desarrollo → http://localhost:5173
-npm run build      # build de producción (vite build → dist/)
-npm run preview    # previsualizar el build
+npm install            # instala todas las apps/paquetes (un solo node_modules + lockfile)
+npm run dev:pos        # POS en  http://localhost:5173  (alias: npm run dev)
+npm run dev:cliente    # cliente en http://localhost:5174
+npm run build          # build de producción de AMBAS apps (→ apps/<app>/dist)
+npm run build:pos      # build solo del POS
+npm run build:cliente  # build solo del cliente
 ```
 
 No hay tests, ni ESLint/Prettier configurados, ni CI. No existe paso de typecheck.
 
-## ⚠️ Estructura de Git (importante)
+## Estructura de Git
 
-El repositorio Git **NO está en `soulbrew/`** sino en la carpeta padre (`C:\Users\Hp\Desktop\`).
-Por eso `git status` muestra cientos de archivos personales no relacionados (PDFs, otros proyectos,
-etc.). Al hacer commits, **agrega solo archivos dentro de `soulbrew/`** explícitamente por ruta —
-nunca uses `git add -A` / `git add .` desde la raíz. Rama de trabajo actual: `master`
-(existe también `Develop-JP`).
+El repositorio Git está en `soulbrew/` (raíz del monorepo) y está limpio. Rama de trabajo: `main`.
 
 ## Variables de entorno
 
-`.env.local` (no versionado) con prefijo `VITE_`:
+Cada app tiene su propio `.env.local` (no versionado), con prefijo `VITE_`. Ver `.env.example`.
+- **`apps/pos/.env.local`**: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_N8N_WEBHOOK_URL`,
+  (opcional) `VITE_PUBLIC_URL`.
+- **`apps/cliente/.env.local`**: solo `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`.
 
-```
-VITE_SUPABASE_URL=https://<proyecto>.supabase.co
-VITE_SUPABASE_ANON_KEY=<anon-key>
-```
-
-El cliente Supabase se crea en `src/lib/supabase.js`. Hay un MCP de Supabase configurado en
+El cliente Supabase se crea con `createSupabaseClient(url, anonKey)` de **`@soulbrew/core`**; cada
+app lo invoca desde su `src/lib/supabase.js` con sus propias env. Hay un MCP de Supabase en
 `.mcp.json` (úsalo para inspeccionar/modificar el schema cuando sea necesario).
 
 ## Arquitectura de archivos
 
 ```
-src/
-  main.jsx              # entry; monta <App/> en #root
-  App.jsx              # rutas + AuthProvider
-  index.css           # Tailwind directives
-  lib/supabase.js     # cliente Supabase (singleton)
-  contexts/AuthContext.jsx   # sesión/usuario; useAuth()
+packages/core/src/         # @soulbrew/core — JS puro compartido (sin UI)
+  supabase.js              #   createSupabaseClient(url, anonKey) — factory
+  puntos.js                #   constantes/helpers de fidelización (getNivel, maxCanjeable, ...)
+  index.js                 #   re-exporta lo anterior
+
+apps/pos/src/              # POS/admin (protegido por auth)
+  main.jsx, App.jsx, index.css
+  lib/supabase.js          #   usa el factory de @soulbrew/core
+  contexts/AuthContext.jsx #   sesión/usuario; useAuth()
   components/
-    Layout.jsx        # sidebar de navegación (rutas protegidas) + badge de insumos críticos
-    ProtectedRoute.jsx # gate de sesión
-    ProductoCard.jsx  # tarjeta de producto en el POS
-    InsumoCard.jsx    # tarjeta de insumo en inventario
-    Toast.jsx         # notificación efímera
+    Layout.jsx             #   sidebar + badge de insumos críticos (realtime)
+    ProtectedRoute.jsx     #   gate de sesión
+    ProductoCard.jsx, InsumoCard.jsx, Toast.jsx, Markdown.jsx
   pages/
-    Login.jsx         # login + registro (Supabase Auth, email/password)
-    Vender.jsx        # POS: grid de productos + carrito + cliente + canje de puntos
-    Inventario.jsx    # insumos + restock
-    Productos.jsx     # CRUD de productos, toggle activo, recetas, subida de imagen
-    Clientes.jsx      # lista de clientes, detalle, historial y ajuste manual de puntos
-    FidelidadPublica.jsx # tarjeta pública de fidelización (ruta sin auth)
+    Login.jsx              #   login + registro (Supabase Auth)
+    Vender.jsx             #   POS: carrito + cliente + canje + método de pago
+    Inventario.jsx         #   insumos + restock
+    Productos.jsx          #   CRUD de productos, recetas, imagen
+    Clientes.jsx           #   clientes, detalle, historial, ajuste de puntos, QR
+    Reportes.jsx           #   corte de caja del día + reporteo diario y mensual
+    Asistente.jsx          #   chat con el agente de IA (n8n)
+
+apps/cliente/src/          # App pública del cliente (sin auth)
+  main.jsx, App.jsx, index.css
+  lib/supabase.js          #   usa el factory de @soulbrew/core
+  pages/FidelidadPublica.jsx  # tarjeta de fidelización + Google Wallet
 ```
 
 ### Rutas
 
+**`apps/pos`** (todas protegidas salvo `/login`):
+
 | Ruta | Auth | Descripción |
 |------|------|-------------|
 | `/login` | pública | Login / registro |
-| `/fidelidad/:telefono` | pública | Tarjeta de fidelización del cliente (consulta por teléfono) |
 | `/vender` | protegida | Punto de venta (ruta por defecto tras login) |
 | `/inventario` | protegida | Insumos + restock |
 | `/productos` | protegida | Productos + recetas |
 | `/clientes` | protegida | Clientes + puntos |
+| `/reportes` | protegida | Corte del día (cierre de caja) y reportes diario/mensual |
 | `/asistente` | protegida | Chat con agente de IA (analítica vía n8n) |
 
 Las rutas protegidas se envuelven en `<ProtectedRoute>` → `<Layout>` (sidebar). `/` redirige a `/vender`.
+
+**`apps/cliente`** (pública, sin auth):
+
+| Ruta | Descripción |
+|------|-------------|
+| `/fidelidad/:telefono` | Tarjeta de fidelización del cliente (consulta por teléfono) + Google Wallet |
+| `/` y resto | Pantalla simple "pide tu enlace en caja" |
 
 ## Modelo de datos (Supabase Postgres)
 
@@ -95,8 +112,10 @@ Inferido del código. Verifica con el MCP de Supabase antes de cambios de schema
   - Al registrar restock se inserta la fila **y** se actualiza `insumos.stock_actual` (en el cliente, no atómico)
 - **productos**: `id, nombre, descripcion, precio, categoria ('Bebidas'|'Alimentos'|'Postres'), imagen_url, activo`
 - **recetas**: `id, producto_id, insumo_id, cantidad` — relación producto↔insumo (clave única `producto_id,insumo_id`, se hace upsert)
-- **ventas**: `id, total, notas, created_by, cliente_id (nullable), created_at`
-- **venta_items**: `id, venta_id, producto_id, cantidad, precio_unitario`
+- **ventas**: `id, total, notas, created_by, cliente_id (nullable), created_at, metodo_pago ('efectivo'|'tarjeta'|'transferencia', default 'efectivo')`
+- **venta_items**: `id, venta_id, producto_id, cantidad, precio_unitario, subtotal (nullable, no se setea en el insert del POS)`
+- **cortes**: `id, fecha (date), inicio, fin, fondo_inicial, total_ventas, num_ventas, total_efectivo, total_tarjeta, total_transferencia, descuentos, efectivo_esperado, efectivo_contado, diferencia, notas, created_by, created_at`
+  - Snapshot histórico de cada cierre de caja. Un corte cubre el periodo **desde el `fin` del último corte del día (o el inicio del día) hasta ahora**; permite varios cortes por día (turnos). `efectivo_esperado = fondo_inicial + total_efectivo`; `diferencia = efectivo_contado − efectivo_esperado`.
 - **clientes**: `id, nombre, telefono (único, 10 dígitos), email, puntos_acumulados, visitas, created_at`
 - **puntos_historial**: `id, cliente_id, venta_id (nullable), puntos (+/-), concepto ('compra'|'canje'|'bono'|'ajuste'|...), created_at`
 
@@ -135,7 +154,7 @@ Detalle de parámetros en `docs/n8n-asistente.md`.
 ## Asistente de IA (página `/asistente`)
 
 Chat para preguntarle a un agente sobre ventas/productos/inventario/clientes.
-- **Frontend** (`src/pages/Asistente.jsx`): hace `POST` a `VITE_N8N_WEBHOOK_URL` con
+- **Frontend** (`apps/pos/src/pages/Asistente.jsx`): hace `POST` a `VITE_N8N_WEBHOOK_URL` con
   `{ message, sessionId, userEmail }` y el JWT del usuario en `Authorization`. Pinta la
   respuesta (`reply`/`output`/`text`/`message`/`answer`). `sessionId` se guarda en
   `sessionStorage` para dar continuidad a la memoria del agente.

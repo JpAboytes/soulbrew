@@ -3,6 +3,7 @@ node_modules
 
 # Build
 dist
+apps/**/dist
 
 # Variables de entorno / secretos (NUNCA subir)
 .env

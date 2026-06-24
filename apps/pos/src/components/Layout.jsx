@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { ShoppingCart, Package, Coffee, LogOut, Users, Sparkles } from 'lucide-react'
+import { ShoppingCart, Package, Coffee, LogOut, Users, Sparkles, BarChart3 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -31,6 +31,7 @@ export default function Layout() {
     { to: '/inventario', icon: Package, label: 'Inventario', badge: criticalCount },
     { to: '/productos', icon: Coffee, label: 'Productos' },
     { to: '/clientes', icon: Users, label: 'Clientes' },
+    { to: '/reportes', icon: BarChart3, label: 'Reportes' },
     { to: '/asistente', icon: Sparkles, label: 'Asistente' },
   ]
 

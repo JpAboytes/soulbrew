@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import {
   Minus, Plus, Trash2, ShoppingCart, AlertTriangle,
   X, Phone, User, Star, CheckCircle,
+  Banknote, CreditCard, ArrowLeftRight,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
@@ -156,6 +157,7 @@ export default function Vender() {
   // Carrito
   const [carrito, setCarrito] = useState([])
   const [notas, setNotas] = useState('')
+  const [metodoPago, setMetodoPago] = useState('efectivo')
 
   // Cliente
   const [clienteQuery, setClienteQuery] = useState('')
@@ -264,6 +266,7 @@ export default function Vender() {
           notas: notas || null,
           created_by: user.id,
           cliente_id: clienteSeleccionado?.id ?? null,
+          metodo_pago: metodoPago,
         })
         .select().single()
       if (eVenta) throw eVenta
@@ -324,6 +327,7 @@ export default function Vender() {
       })
       setCarrito([])
       setNotas('')
+      setMetodoPago('efectivo')
       deseleccionarCliente()
     } catch (err) {
       setToastError(err.message || 'Error al registrar la venta')
@@ -574,6 +578,32 @@ export default function Vender() {
                 </p>
               </div>
             )}
+
+            {/* Método de pago */}
+            <div>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Método de pago</p>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { value: 'efectivo', label: 'Efectivo', icon: Banknote },
+                  { value: 'tarjeta', label: 'Tarjeta', icon: CreditCard },
+                  { value: 'transferencia', label: 'Transf.', icon: ArrowLeftRight },
+                ].map(({ value, label, icon: Icon }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setMetodoPago(value)}
+                    className={`flex flex-col items-center justify-center gap-1 rounded-xl py-2 min-h-[52px] border text-xs font-semibold transition-colors ${
+                      metodoPago === value
+                        ? 'bg-[#2C1810] text-white border-[#2C1810]'
+                        : 'bg-white text-[#2C1810] border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <Icon size={16} />
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
 
             {/* Notas */}
             <textarea
