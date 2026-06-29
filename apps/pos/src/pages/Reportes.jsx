@@ -68,7 +68,7 @@ function topProductos(items, limit = 8) {
 
 // ─── Componentes UI compartidos ────────────────────────────────────────────────
 
-function KpiCard({ icon: Icon, label, value, sub, accent = '#2C1810' }) {
+function KpiCard({ icon: Icon, label, value, sub, accent = '#42241A' }) {
   return (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
       <div className="flex items-center gap-2 mb-1.5">
@@ -77,7 +77,7 @@ function KpiCard({ icon: Icon, label, value, sub, accent = '#2C1810' }) {
         </div>
         <p className="text-xs font-medium text-gray-500">{label}</p>
       </div>
-      <p className="text-2xl font-bold text-[#2C1810] leading-tight">{value}</p>
+      <p className="text-2xl font-bold text-[#42241A] leading-tight">{value}</p>
       {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
     </div>
   )
@@ -92,10 +92,10 @@ function MetodoBreakdown({ desglose, total }) {
         return (
           <div key={key}>
             <div className="flex items-center justify-between text-sm mb-1">
-              <span className="flex items-center gap-2 text-[#2C1810] font-medium">
+              <span className="flex items-center gap-2 text-[#42241A] font-medium">
                 <Icon size={15} style={{ color }} /> {label}
               </span>
-              <span className="font-semibold text-[#2C1810]">{money(monto)}</span>
+              <span className="font-semibold text-[#42241A]">{money(monto)}</span>
             </div>
             <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
               <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: color }} />
@@ -119,11 +119,11 @@ function TopProductosList({ productos }) {
           <span className="w-5 text-center text-xs font-bold text-gray-400 shrink-0">{i + 1}</span>
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-sm font-medium text-[#2C1810] truncate">{p.nombre}</span>
+              <span className="text-sm font-medium text-[#42241A] truncate">{p.nombre}</span>
               <span className="text-xs text-gray-400 shrink-0 ml-2">{p.unidades} u · {money(p.importe)}</span>
             </div>
             <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-              <div className="h-full bg-[#D4A853] rounded-full" style={{ width: `${(p.importe / max) * 100}%` }} />
+              <div className="h-full bg-[#4E5B3D] rounded-full" style={{ width: `${(p.importe / max) * 100}%` }} />
             </div>
           </div>
         </div>
@@ -135,7 +135,7 @@ function TopProductosList({ productos }) {
 function Spinner() {
   return (
     <div className="flex justify-center py-20">
-      <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#D4A853] border-t-transparent" />
+      <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#4E5B3D] border-t-transparent" />
     </div>
   )
 }
@@ -187,8 +187,8 @@ function CorteCajaPanel({ fecha, periodStart, ventasPeriodo, descuentosPeriodo, 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
       <div className="flex items-center gap-2 mb-1">
-        <Wallet size={18} className="text-[#D4A853]" />
-        <h3 className="font-bold text-[#2C1810]">Cierre de caja</h3>
+        <Wallet size={18} className="text-[#4E5B3D]" />
+        <h3 className="font-bold text-[#42241A]">Cierre de caja</h3>
       </div>
       <p className="text-xs text-gray-400 mb-4">
         Ventas sin cortar desde las {horaInicio} · {ventasPeriodo.length} venta{ventasPeriodo.length === 1 ? '' : 's'}
@@ -200,8 +200,8 @@ function CorteCajaPanel({ fecha, periodStart, ventasPeriodo, descuentosPeriodo, 
         <>
           {/* Resumen del periodo */}
           <div className="bg-gray-50 rounded-xl p-3 mb-4 space-y-1.5 text-sm">
-            <div className="flex justify-between"><span className="text-gray-500">Ventas del periodo</span><span className="font-semibold text-[#2C1810]">{money(totalVentas)}</span></div>
-            <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-1"><Banknote size={13} className="text-green-600" /> En efectivo</span><span className="font-semibold text-[#2C1810]">{money(desglose.efectivo)}</span></div>
+            <div className="flex justify-between"><span className="text-gray-500">Ventas del periodo</span><span className="font-semibold text-[#42241A]">{money(totalVentas)}</span></div>
+            <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-1"><Banknote size={13} className="text-green-600" /> En efectivo</span><span className="font-semibold text-[#42241A]">{money(desglose.efectivo)}</span></div>
             <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-1"><CreditCard size={13} className="text-blue-600" /> Tarjeta</span><span className="text-gray-500">{money(desglose.tarjeta)}</span></div>
             <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-1"><ArrowLeftRight size={13} className="text-purple-600" /> Transferencia</span><span className="text-gray-500">{money(desglose.transferencia)}</span></div>
           </div>
@@ -209,26 +209,26 @@ function CorteCajaPanel({ fecha, periodStart, ventasPeriodo, descuentosPeriodo, 
           {/* Inputs */}
           <div className="grid grid-cols-2 gap-3 mb-3">
             <div>
-              <label className="block text-xs font-medium text-[#2C1810] mb-1">Fondo de caja</label>
+              <label className="block text-xs font-medium text-[#42241A] mb-1">Fondo de caja</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
                 <input
                   type="number" inputMode="decimal" min="0" step="any"
                   value={fondo} onChange={e => setFondo(e.target.value)}
                   placeholder="0.00"
-                  className="w-full border border-gray-200 rounded-xl pl-7 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4A853] min-h-[44px]"
+                  className="w-full border border-gray-200 rounded-xl pl-7 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#4E5B3D] min-h-[44px]"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#2C1810] mb-1">Efectivo contado</label>
+              <label className="block text-xs font-medium text-[#42241A] mb-1">Efectivo contado</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
                 <input
                   type="number" inputMode="decimal" min="0" step="any"
                   value={contado} onChange={e => setContado(e.target.value)}
                   placeholder="0.00"
-                  className="w-full border border-gray-200 rounded-xl pl-7 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4A853] min-h-[44px]"
+                  className="w-full border border-gray-200 rounded-xl pl-7 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#4E5B3D] min-h-[44px]"
                 />
               </div>
             </div>
@@ -238,7 +238,7 @@ function CorteCajaPanel({ fecha, periodStart, ventasPeriodo, descuentosPeriodo, 
           <div className="space-y-1.5 mb-4 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-500">Efectivo esperado (fondo + ventas)</span>
-              <span className="font-semibold text-[#2C1810]">{money(esperado)}</span>
+              <span className="font-semibold text-[#42241A]">{money(esperado)}</span>
             </div>
             {diferencia !== null && (
               <div className={`flex justify-between font-bold rounded-xl px-3 py-2 ${
@@ -254,7 +254,7 @@ function CorteCajaPanel({ fecha, periodStart, ventasPeriodo, descuentosPeriodo, 
           <input
             value={notas} onChange={e => setNotas(e.target.value)}
             placeholder="Notas del corte (opcional)"
-            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4A853] mb-3 min-h-[44px]"
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#4E5B3D] mb-3 min-h-[44px]"
           />
 
           {error && (
@@ -264,7 +264,7 @@ function CorteCajaPanel({ fecha, periodStart, ventasPeriodo, descuentosPeriodo, 
           <button
             onClick={cerrarCorte}
             disabled={saving || contado === ''}
-            className="w-full bg-[#2C1810] hover:bg-[#5C3317] disabled:opacity-50 text-white font-bold py-3.5 rounded-xl transition-colors min-h-[52px] flex items-center justify-center gap-2"
+            className="w-full bg-[#42241A] hover:bg-[#5C3A28] disabled:opacity-50 text-white font-bold py-3.5 rounded-xl transition-colors min-h-[52px] flex items-center justify-center gap-2"
           >
             <Save size={18} />
             {saving ? 'Guardando...' : 'Cerrar corte'}
@@ -336,11 +336,11 @@ function DiaTab() {
           <input
             type="date" value={fecha} max={hoyStr()}
             onChange={e => setFecha(e.target.value)}
-            className="border border-gray-200 rounded-xl pl-9 pr-3 py-2.5 text-sm font-medium text-[#2C1810] focus:outline-none focus:ring-2 focus:ring-[#D4A853] bg-white min-h-[44px]"
+            className="border border-gray-200 rounded-xl pl-9 pr-3 py-2.5 text-sm font-medium text-[#42241A] focus:outline-none focus:ring-2 focus:ring-[#4E5B3D] bg-white min-h-[44px]"
           />
         </div>
         {!esHoy && (
-          <button onClick={() => setFecha(hoyStr())} className="text-sm text-[#D4A853] font-medium hover:underline">
+          <button onClick={() => setFecha(hoyStr())} className="text-sm text-[#4E5B3D] font-medium hover:underline">
             Ir a hoy
           </button>
         )}
@@ -351,8 +351,8 @@ function DiaTab() {
           {/* KPIs */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <KpiCard icon={DollarSign} label="Total cobrado" value={money(totalDia)} accent="#16a34a" />
-            <KpiCard icon={Receipt} label="Ventas" value={ventas.length} sub={`Ticket prom. ${money(ticket)}`} accent="#2C1810" />
-            <KpiCard icon={ShoppingBag} label="Unidades" value={unidades} accent="#D4A853" />
+            <KpiCard icon={Receipt} label="Ventas" value={ventas.length} sub={`Ticket prom. ${money(ticket)}`} accent="#42241A" />
+            <KpiCard icon={ShoppingBag} label="Unidades" value={unidades} accent="#4E5B3D" />
             <KpiCard icon={TrendingUp} label="Descuentos puntos" value={money(descuentos)} accent="#9333ea" />
           </div>
 
@@ -361,7 +361,7 @@ function DiaTab() {
             <div className="space-y-5">
               {/* Desglose por método */}
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-                <h3 className="font-bold text-[#2C1810] mb-4">Por método de pago</h3>
+                <h3 className="font-bold text-[#42241A] mb-4">Por método de pago</h3>
                 <MetodoBreakdown desglose={desglose} total={totalDia} />
               </div>
 
@@ -384,16 +384,16 @@ function DiaTab() {
               {/* Cortes registrados */}
               {cortes.length > 0 && (
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-                  <h3 className="font-bold text-[#2C1810] mb-3">Cortes del día ({cortes.length})</h3>
+                  <h3 className="font-bold text-[#42241A] mb-3">Cortes del día ({cortes.length})</h3>
                   <div className="space-y-2 divide-y divide-gray-50">
                     {cortes.map((c, i) => (
                       <div key={c.id} className="pt-2 first:pt-0">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-[#2C1810] flex items-center gap-1.5">
+                          <span className="text-sm font-medium text-[#42241A] flex items-center gap-1.5">
                             <CheckCircle size={14} className="text-green-600" />
                             Corte #{i + 1} · {new Date(c.fin).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })}
                           </span>
-                          <span className="text-sm font-bold text-[#2C1810]">{money(c.total_ventas)}</span>
+                          <span className="text-sm font-bold text-[#42241A]">{money(c.total_ventas)}</span>
                         </div>
                         <div className="flex items-center justify-between mt-1 text-xs text-gray-400">
                           <span>Efectivo esperado {money(c.efectivo_esperado)} · contado {money(c.efectivo_contado)}</span>
@@ -412,13 +412,13 @@ function DiaTab() {
             <div className="space-y-5">
               {/* Top productos */}
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-                <h3 className="font-bold text-[#2C1810] mb-4">Productos más vendidos</h3>
+                <h3 className="font-bold text-[#42241A] mb-4">Productos más vendidos</h3>
                 <TopProductosList productos={top} />
               </div>
 
               {/* Ventas del día */}
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-                <h3 className="font-bold text-[#2C1810] mb-3">Ventas del día ({ventas.length})</h3>
+                <h3 className="font-bold text-[#42241A] mb-3">Ventas del día ({ventas.length})</h3>
                 {ventas.length === 0 ? (
                   <p className="text-sm text-gray-400 italic text-center py-6">Sin ventas registradas</p>
                 ) : (
@@ -429,7 +429,7 @@ function DiaTab() {
                       return (
                         <div key={v.id} className="flex items-center justify-between py-2.5">
                           <div className="min-w-0">
-                            <p className="text-sm font-medium text-[#2C1810]">
+                            <p className="text-sm font-medium text-[#42241A]">
                               {new Date(v.created_at).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })}
                               {v.clientes?.nombre && <span className="text-gray-400 font-normal"> · {v.clientes.nombre}</span>}
                             </p>
@@ -437,7 +437,7 @@ function DiaTab() {
                               <Icon size={12} /> {M.label}
                             </p>
                           </div>
-                          <span className="font-bold text-[#2C1810] text-sm shrink-0">{money(v.total)}</span>
+                          <span className="font-bold text-[#42241A] text-sm shrink-0">{money(v.total)}</span>
                         </div>
                       )
                     })}
@@ -509,7 +509,7 @@ function MesTab() {
         <input
           type="month" value={ym} max={mesStr()}
           onChange={e => setYm(e.target.value)}
-          className="border border-gray-200 rounded-xl pl-9 pr-3 py-2.5 text-sm font-medium text-[#2C1810] focus:outline-none focus:ring-2 focus:ring-[#D4A853] bg-white min-h-[44px]"
+          className="border border-gray-200 rounded-xl pl-9 pr-3 py-2.5 text-sm font-medium text-[#42241A] focus:outline-none focus:ring-2 focus:ring-[#4E5B3D] bg-white min-h-[44px]"
         />
       </div>
 
@@ -518,14 +518,14 @@ function MesTab() {
           {/* KPIs */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <KpiCard icon={DollarSign} label={`Total ${MESES[m - 1]}`} value={money(totalMes)} accent="#16a34a" />
-            <KpiCard icon={Receipt} label="Ventas" value={ventas.length} sub={`Ticket prom. ${money(ticket)}`} accent="#2C1810" />
-            <KpiCard icon={TrendingUp} label="Mejor día" value={mejorDia.total > 0 ? `${mejorDia.dia} ${MESES[m - 1].slice(0, 3)}` : '—'} sub={mejorDia.total > 0 ? money(mejorDia.total) : null} accent="#D4A853" />
+            <KpiCard icon={Receipt} label="Ventas" value={ventas.length} sub={`Ticket prom. ${money(ticket)}`} accent="#42241A" />
+            <KpiCard icon={TrendingUp} label="Mejor día" value={mejorDia.total > 0 ? `${mejorDia.dia} ${MESES[m - 1].slice(0, 3)}` : '—'} sub={mejorDia.total > 0 ? money(mejorDia.total) : null} accent="#4E5B3D" />
             <KpiCard icon={ShoppingBag} label="Prom. diario" value={money(totalMes / days)} accent="#9333ea" />
           </div>
 
           {/* Gráfica de barras por día */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <h3 className="font-bold text-[#2C1810] mb-4">Ventas por día</h3>
+            <h3 className="font-bold text-[#42241A] mb-4">Ventas por día</h3>
             {totalMes === 0 ? (
               <p className="text-sm text-gray-400 italic text-center py-10">Sin ventas este mes</p>
             ) : (
@@ -533,11 +533,11 @@ function MesTab() {
                 {porDia.map(d => (
                   <div key={d.dia} className="flex-1 flex flex-col items-center justify-end group relative h-full">
                     <div
-                      className="w-full rounded-t bg-[#D4A853] hover:bg-[#2C1810] transition-colors min-h-[2px]"
+                      className="w-full rounded-t bg-[#4E5B3D] hover:bg-[#42241A] transition-colors min-h-[2px]"
                       style={{ height: `${(d.total / maxDia) * 100}%` }}
                     />
                     {/* Tooltip */}
-                    <div className="absolute bottom-full mb-1 hidden group-hover:block bg-[#2C1810] text-white text-[10px] rounded-lg px-2 py-1 whitespace-nowrap z-10">
+                    <div className="absolute bottom-full mb-1 hidden group-hover:block bg-[#42241A] text-white text-[10px] rounded-lg px-2 py-1 whitespace-nowrap z-10">
                       {d.dia} {MESES[m - 1].slice(0, 3)}: {money(d.total)} · {d.ventas} v
                     </div>
                     {(d.dia === 1 || d.dia % 5 === 0) && (
@@ -551,11 +551,11 @@ function MesTab() {
 
           <div className="grid lg:grid-cols-2 gap-5">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-              <h3 className="font-bold text-[#2C1810] mb-4">Por método de pago</h3>
+              <h3 className="font-bold text-[#42241A] mb-4">Por método de pago</h3>
               <MetodoBreakdown desglose={desglose} total={totalMes} />
             </div>
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-              <h3 className="font-bold text-[#2C1810] mb-4">Productos más vendidos del mes</h3>
+              <h3 className="font-bold text-[#42241A] mb-4">Productos más vendidos del mes</h3>
               <TopProductosList productos={top} />
             </div>
           </div>
@@ -573,7 +573,7 @@ export default function Reportes() {
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <div className="mb-5">
-        <h1 className="text-2xl font-bold text-[#2C1810]">Reportes</h1>
+        <h1 className="text-2xl font-bold text-[#42241A]">Reportes</h1>
         <p className="text-sm text-gray-500 mt-0.5">Corte de caja y desempeño de ventas</p>
       </div>
 
@@ -587,7 +587,7 @@ export default function Reportes() {
             key={t.value}
             onClick={() => setTab(t.value)}
             className={`px-5 py-2.5 rounded-xl font-medium text-sm transition-colors min-h-[44px] ${
-              tab === t.value ? 'bg-[#2C1810] text-white' : 'bg-white text-[#2C1810] border border-gray-100 hover:bg-gray-50'
+              tab === t.value ? 'bg-[#42241A] text-white' : 'bg-white text-[#42241A] border border-gray-100 hover:bg-gray-50'
             }`}
           >
             {t.label}

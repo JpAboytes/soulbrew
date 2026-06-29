@@ -73,24 +73,22 @@ export default function FidelidadPublica() {
 
   // ── Loading ──────────────────────────────────────────────────────────────────
   if (state.status === 'loading') return (
-    <div className="min-h-screen bg-[#2C1810] flex flex-col items-center justify-center gap-4">
-      <div className="bg-[#D4A853] p-3 rounded-2xl">
-        <Coffee size={28} className="text-[#2C1810]" />
-      </div>
-      <div className="animate-spin rounded-full h-8 w-8 border-4 border-[#D4A853] border-t-transparent" />
+    <div className="min-h-screen bg-[#42241A] flex flex-col items-center justify-center gap-5">
+      <img src="/logo-dark.png" alt="Soulbrew" className="h-16 w-auto" />
+      <div className="animate-spin rounded-full h-8 w-8 border-4 border-[#4E5B3D] border-t-transparent" />
     </div>
   )
 
   // ── Error técnico ─────────────────────────────────────────────────────────────
   if (state.status === 'error') return (
-    <div className="min-h-screen bg-[#2C1810] flex items-center justify-center p-6">
+    <div className="min-h-screen bg-[#42241A] flex items-center justify-center p-6">
       <div className="bg-[#FAFAF7] rounded-3xl p-8 text-center max-w-sm w-full">
         <Coffee size={40} className="text-red-400 mx-auto mb-4" />
-        <h2 className="text-xl font-bold text-[#2C1810]">Algo salió mal</h2>
+        <h2 className="text-xl font-bold text-[#42241A]">Algo salió mal</h2>
         <p className="text-gray-500 mt-2 text-sm">{state.error}</p>
         <button
           onClick={() => window.location.reload()}
-          className="mt-5 bg-[#D4A853] text-[#2C1810] font-bold px-6 py-3 rounded-xl w-full min-h-[48px]"
+          className="mt-5 bg-[#4E5B3D] text-[#FAFAF7] font-bold px-6 py-3 rounded-xl w-full min-h-[48px]"
         >
           Reintentar
         </button>
@@ -100,14 +98,14 @@ export default function FidelidadPublica() {
 
   // ── No encontrado ─────────────────────────────────────────────────────────────
   if (state.status === 'not_found') return (
-    <div className="min-h-screen bg-[#2C1810] flex items-center justify-center p-6">
+    <div className="min-h-screen bg-[#42241A] flex items-center justify-center p-6">
       <div className="bg-[#FAFAF7] rounded-3xl p-8 text-center max-w-sm w-full">
-        <Coffee size={48} className="text-[#D4A853] mx-auto mb-4" />
-        <h2 className="text-xl font-bold text-[#2C1810]">No encontrado</h2>
+        <img src="/logo-light.png" alt="Soulbrew" className="h-16 w-auto mx-auto mb-5" />
+        <h2 className="text-xl font-bold text-[#42241A]">No encontrado</h2>
         <p className="text-gray-500 mt-2 text-sm">
           No hay cuenta de fidelización con el número <strong>{telefono}</strong>.
         </p>
-        <p className="text-xs text-[#8B5A3C] mt-4">
+        <p className="text-xs text-[#7C5A43] mt-4">
           Visítanos y pide registrarte en caja.
         </p>
       </div>
@@ -139,18 +137,13 @@ export default function FidelidadPublica() {
   }
 
   return (
-    <div className="min-h-screen bg-[#2C1810] py-8 px-4 flex justify-center">
+    <div className="min-h-screen bg-[#42241A] py-8 px-4 flex justify-center">
       <div className="w-full max-w-sm">
 
         {/* Header de la cafetería */}
-        <div className="flex items-center gap-3 mb-6 px-1">
-          <div className="bg-[#D4A853] p-2.5 rounded-xl">
-            <Coffee size={22} className="text-[#2C1810]" />
-          </div>
-          <div>
-            <h1 className="text-white font-bold text-xl">Soulbrew</h1>
-            <p className="text-[#8B5A3C] text-xs">Tarjeta de fidelización</p>
-          </div>
+        <div className="mb-6 px-1">
+          <img src="/logo-dark.png" alt="Soulbrew" className="h-12 w-auto" />
+          <p className="text-[#AEBB92] text-xs mt-2">Tarjeta de fidelización</p>
         </div>
 
         {/* Tarjeta principal */}
@@ -158,23 +151,23 @@ export default function FidelidadPublica() {
 
           {/* Datos del cliente */}
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-14 h-14 rounded-2xl bg-[#D4A853]/20 flex items-center justify-center shrink-0">
-              <span className="text-2xl font-bold text-[#D4A853]">
+            <div className="w-14 h-14 rounded-2xl bg-[#4E5B3D]/20 flex items-center justify-center shrink-0">
+              <span className="text-2xl font-bold text-[#4E5B3D]">
                 {cliente.nombre.charAt(0).toUpperCase()}
               </span>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[#2C1810]">{cliente.nombre}</h2>
-              <p className="text-sm text-[#8B5A3C]">
+              <h2 className="text-xl font-bold text-[#42241A]">{cliente.nombre}</h2>
+              <p className="text-sm text-[#7C5A43]">
                 {cliente.visitas} visita{cliente.visitas !== 1 ? 's' : ''}
               </p>
             </div>
           </div>
 
           {/* Puntos destacados */}
-          <div className="text-center bg-[#2C1810] rounded-2xl py-6 px-4 mb-5">
-            <p className="text-[#8B5A3C] text-sm mb-1">Puntos disponibles</p>
-            <p className="text-6xl font-bold text-[#D4A853] leading-none tabular-nums">{puntos}</p>
+          <div className="text-center bg-[#42241A] rounded-2xl py-6 px-4 mb-5">
+            <p className="text-[#AEBB92] text-sm mb-1">Puntos disponibles</p>
+            <p className="text-6xl font-bold text-[#AEBB92] leading-none tabular-nums">{puntos}</p>
             {recompensasDisponibles > 0 && (
               <p className="text-green-400 text-sm mt-3 font-semibold">
                 🎁 {recompensasDisponibles} recompensa{recompensasDisponibles > 1 ? 's' : ''} disponible{recompensasDisponibles > 1 ? 's' : ''}
@@ -195,7 +188,7 @@ export default function FidelidadPublica() {
             </div>
             <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
               <div
-                className="h-full bg-[#D4A853] rounded-full transition-all duration-700"
+                className="h-full bg-[#4E5B3D] rounded-full transition-all duration-700"
                 style={{ width: `${progressInTier === 0 && puntos > 0 ? 100 : progressInTier}%` }}
               />
             </div>
@@ -214,19 +207,19 @@ export default function FidelidadPublica() {
           {/* Historial de visitas */}
           {historial.length > 0 && (
             <div>
-              <h3 className="text-sm font-bold text-[#2C1810] mb-3">Últimas visitas</h3>
+              <h3 className="text-sm font-bold text-[#42241A] mb-3">Últimas visitas</h3>
               <div className="divide-y divide-gray-50">
                 {historial.map((h, i) => (
                   <div key={i} className="flex justify-between items-center py-2.5">
                     <div>
-                      <p className="text-sm font-medium text-[#2C1810] capitalize">{h.concepto}</p>
+                      <p className="text-sm font-medium text-[#42241A] capitalize">{h.concepto}</p>
                       <p className="text-xs text-gray-400">
                         {new Date(h.created_at).toLocaleDateString('es-MX', {
                           day: 'numeric', month: 'short', year: 'numeric',
                         })}
                       </p>
                     </div>
-                    <span className="font-bold text-sm text-[#D4A853]">+{h.puntos} pts</span>
+                    <span className="font-bold text-sm text-[#4E5B3D]">+{h.puntos} pts</span>
                   </div>
                 ))}
               </div>
@@ -243,10 +236,10 @@ export default function FidelidadPublica() {
         <button
           onClick={agregarAGoogleWallet}
           disabled={walletLoading}
-          className="mt-5 w-full bg-[#D4A853] hover:bg-[#c49843] disabled:opacity-60 text-[#2C1810] font-bold py-4 rounded-2xl flex items-center justify-center gap-2 min-h-[52px] transition-colors"
+          className="mt-5 w-full bg-[#4E5B3D] hover:bg-[#3E4A30] disabled:opacity-60 text-[#FAFAF7] font-bold py-4 rounded-2xl flex items-center justify-center gap-2 min-h-[52px] transition-colors"
         >
           {walletLoading ? (
-            <span className="animate-spin rounded-full h-5 w-5 border-2 border-[#2C1810] border-t-transparent" />
+            <span className="animate-spin rounded-full h-5 w-5 border-2 border-[#FAFAF7] border-t-transparent" />
           ) : (
             <Wallet size={20} />
           )}
@@ -257,7 +250,7 @@ export default function FidelidadPublica() {
           <p className="text-center text-red-300 text-xs mt-2">{walletError}</p>
         )}
 
-        <p className="text-center text-[#5C3317] text-xs mt-5 px-4">
+        <p className="text-center text-[#5C3A28] text-xs mt-5 px-4">
           Presenta tu número en caja para canjear puntos
         </p>
       </div>

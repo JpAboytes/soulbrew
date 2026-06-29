@@ -38,17 +38,12 @@ export default function Layout() {
   return (
     <div className="flex min-h-screen bg-[#FAFAF7]">
       {/* Sidebar */}
-      <aside className="w-64 bg-[#2C1810] flex flex-col shrink-0">
-        <div className="p-6 border-b border-[#5C3317]">
-          <div className="flex items-center gap-3">
-            <div className="bg-[#D4A853] p-2 rounded-xl">
-              <Coffee className="text-[#2C1810]" size={24} />
-            </div>
-            <div>
-              <h1 className="text-white font-bold text-xl">Soulbrew</h1>
-              <p className="text-[#8B5A3C] text-xs">Cafetería</p>
-            </div>
+      <aside className="w-64 bg-[#42241A] flex flex-col shrink-0">
+        <div className="p-6 border-b border-[#5C3A28]">
+          <div className="bg-[#FAFAF7] rounded-2xl px-4 py-3 flex items-center justify-center shadow-sm">
+            <img src="/logo-light.png" alt="Soulbrew" className="h-12 w-auto" />
           </div>
+          <p className="text-[#7C5A43] text-xs mt-2 pl-0.5">Cafetería</p>
         </div>
 
         <nav className="flex-1 p-4 space-y-2">
@@ -59,8 +54,8 @@ export default function Layout() {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-xl transition-all min-h-[52px] relative ${
                   isActive
-                    ? 'bg-[#D4A853] text-[#2C1810] font-semibold'
-                    : 'text-[#FAFAF7] hover:bg-[#5C3317]'
+                    ? 'bg-[#4E5B3D] text-[#FAFAF7] font-semibold'
+                    : 'text-[#FAFAF7] hover:bg-[#5C3A28]'
                 }`
               }
             >
@@ -75,11 +70,11 @@ export default function Layout() {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-[#5C3317]">
-          <p className="text-[#8B5A3C] text-xs mb-3 truncate px-2">{user?.email}</p>
+        <div className="p-4 border-t border-[#5C3A28]">
+          <p className="text-[#7C5A43] text-xs mb-3 truncate px-2">{user?.email}</p>
           <button
             onClick={signOut}
-            className="flex items-center gap-2 text-[#FAFAF7] hover:text-red-400 transition-colors min-h-[44px] w-full px-2 rounded-xl hover:bg-[#5C3317]"
+            className="flex items-center gap-2 text-[#FAFAF7] hover:text-red-400 transition-colors min-h-[44px] w-full px-2 rounded-xl hover:bg-[#5C3A28]"
           >
             <LogOut size={18} />
             <span className="text-sm">Cerrar sesión</span>

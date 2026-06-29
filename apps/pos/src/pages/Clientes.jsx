@@ -40,15 +40,15 @@ function AjusteModal({ cliente, onClose, onAjusted }) {
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-6">
       <div className="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl">
         <div className="flex justify-between items-center mb-5">
-          <h3 className="text-lg font-bold text-[#2C1810]">Ajustar Puntos</h3>
+          <h3 className="text-lg font-bold text-[#42241A]">Ajustar Puntos</h3>
           <button onClick={onClose} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-400">
             <X size={22} />
           </button>
         </div>
 
-        <div className="bg-[#D4A853]/10 rounded-xl px-4 py-3 mb-5 text-center">
-          <p className="text-sm text-[#8B5A3C]">Puntos actuales</p>
-          <p className="text-3xl font-bold text-[#2C1810]">{cliente.puntos_acumulados}</p>
+        <div className="bg-[#4E5B3D]/10 rounded-xl px-4 py-3 mb-5 text-center">
+          <p className="text-sm text-[#7C5A43]">Puntos actuales</p>
+          <p className="text-3xl font-bold text-[#42241A]">{cliente.puntos_acumulados}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -59,7 +59,7 @@ function AjusteModal({ cliente, onClose, onAjusted }) {
                 type="button"
                 onClick={() => setTipo(t)}
                 className={`py-3 rounded-xl font-semibold text-sm capitalize transition-colors min-h-[48px] ${
-                  tipo === t ? 'bg-[#2C1810] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  tipo === t ? 'bg-[#42241A] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
                 {t === 'agregar' ? '+ Agregar' : '− Quitar'}
@@ -68,29 +68,29 @@ function AjusteModal({ cliente, onClose, onAjusted }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#2C1810] mb-1">Cantidad de puntos *</label>
+            <label className="block text-sm font-medium text-[#42241A] mb-1">Cantidad de puntos *</label>
             <input
               type="number" min="1"
               value={puntos}
               onChange={e => setPuntos(e.target.value)}
               required placeholder="Ej. 50"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853] text-lg"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D] text-lg"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#2C1810] mb-1">Concepto (opcional)</label>
+            <label className="block text-sm font-medium text-[#42241A] mb-1">Concepto (opcional)</label>
             <input
               value={concepto}
               onChange={e => setConcepto(e.target.value)}
               placeholder="Ej. Corrección, Bono cumpleaños..."
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853]"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D]"
             />
           </div>
 
           <button
             type="submit" disabled={loading}
-            className="w-full bg-[#D4A853] hover:bg-[#c49843] disabled:opacity-60 text-[#2C1810] font-bold py-3.5 rounded-xl transition-colors min-h-[52px]"
+            className="w-full bg-[#4E5B3D] hover:bg-[#3E4A30] disabled:opacity-60 text-[#FAFAF7] font-bold py-3.5 rounded-xl transition-colors min-h-[52px]"
           >
             {loading ? 'Guardando...' : 'Confirmar ajuste'}
           </button>
@@ -163,8 +163,8 @@ function ClienteModal({ cliente: clienteInicial, onClose, onUpdated }) {
       <div className="bg-white rounded-3xl w-full max-w-lg max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
         {/* Header */}
         <div className="p-6 border-b border-gray-100 flex items-start gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#D4A853]/20 flex items-center justify-center shrink-0">
-            <span className="text-2xl font-bold text-[#D4A853]">
+          <div className="w-14 h-14 rounded-2xl bg-[#4E5B3D]/20 flex items-center justify-center shrink-0">
+            <span className="text-2xl font-bold text-[#4E5B3D]">
               {cliente.nombre.charAt(0).toUpperCase()}
             </span>
           </div>
@@ -174,7 +174,7 @@ function ClienteModal({ cliente: clienteInicial, onClose, onUpdated }) {
                 <input
                   value={form.nombre}
                   onChange={e => setForm(f => ({ ...f, nombre: e.target.value }))}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-base font-bold focus:outline-none focus:ring-2 focus:ring-[#D4A853]"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-base font-bold focus:outline-none focus:ring-2 focus:ring-[#4E5B3D]"
                 />
                 <div className="grid grid-cols-2 gap-2">
                   <input
@@ -182,20 +182,20 @@ function ClienteModal({ cliente: clienteInicial, onClose, onUpdated }) {
                     value={form.telefono}
                     onChange={e => setForm(f => ({ ...f, telefono: e.target.value.replace(/\D/g, '') }))}
                     placeholder="Teléfono"
-                    className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4A853]"
+                    className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#4E5B3D]"
                   />
                   <input
                     type="email"
                     value={form.email}
                     onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                     placeholder="Email"
-                    className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4A853]"
+                    className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#4E5B3D]"
                   />
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={saveEdit} disabled={saving}
-                    className="flex-1 bg-[#D4A853] text-[#2C1810] font-semibold py-2 rounded-xl text-sm min-h-[40px]"
+                    className="flex-1 bg-[#4E5B3D] text-[#FAFAF7] font-semibold py-2 rounded-xl text-sm min-h-[40px]"
                   >
                     {saving ? 'Guardando...' : 'Guardar'}
                   </button>
@@ -207,7 +207,7 @@ function ClienteModal({ cliente: clienteInicial, onClose, onUpdated }) {
             ) : (
               <>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-xl font-bold text-[#2C1810] truncate">{cliente.nombre}</h2>
+                  <h2 className="text-xl font-bold text-[#42241A] truncate">{cliente.nombre}</h2>
                   {canjeable && (
                     <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full shrink-0">
                       Canjeable
@@ -223,7 +223,7 @@ function ClienteModal({ cliente: clienteInicial, onClose, onUpdated }) {
             {!editando && (
               <button
                 onClick={() => setEditando(true)}
-                className="min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-400 hover:text-[#2C1810] transition-colors"
+                className="min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-400 hover:text-[#42241A] transition-colors"
               >
                 <Edit2 size={18} />
               </button>
@@ -240,15 +240,15 @@ function ClienteModal({ cliente: clienteInicial, onClose, onUpdated }) {
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3 px-6 py-4 border-b border-gray-100">
           <div className="text-center">
-            <p className="text-2xl font-bold text-[#D4A853]">{cliente.puntos_acumulados}</p>
+            <p className="text-2xl font-bold text-[#4E5B3D]">{cliente.puntos_acumulados}</p>
             <p className="text-xs text-gray-500 mt-0.5">puntos</p>
           </div>
           <div className="text-center border-x border-gray-100">
-            <p className="text-2xl font-bold text-[#2C1810]">{cliente.visitas}</p>
+            <p className="text-2xl font-bold text-[#42241A]">{cliente.visitas}</p>
             <p className="text-xs text-gray-500 mt-0.5">visitas</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold text-[#2C1810]">
+            <p className="text-2xl font-bold text-[#42241A]">
               {totalGastado !== null ? `$${totalGastado.toFixed(0)}` : '—'}
             </p>
             <p className="text-xs text-gray-500 mt-0.5">gastado</p>
@@ -259,7 +259,7 @@ function ClienteModal({ cliente: clienteInicial, onClose, onUpdated }) {
         <div className="px-6 py-3 border-b border-gray-100 space-y-1">
           <button
             onClick={() => setShowAjuste(true)}
-            className="flex items-center gap-2 text-sm font-medium text-[#D4A853] hover:text-[#c49843] min-h-[44px] transition-colors"
+            className="flex items-center gap-2 text-sm font-medium text-[#4E5B3D] hover:text-[#3E4A30] min-h-[44px] transition-colors"
           >
             <Star size={16} />
             Ajustar puntos manualmente
@@ -268,7 +268,7 @@ function ClienteModal({ cliente: clienteInicial, onClose, onUpdated }) {
           {cliente.telefono && (
             <button
               onClick={() => setShowQR(v => !v)}
-              className="flex items-center gap-2 text-sm font-medium text-[#2C1810] hover:text-[#5C3317] min-h-[44px] transition-colors"
+              className="flex items-center gap-2 text-sm font-medium text-[#42241A] hover:text-[#5C3A28] min-h-[44px] transition-colors"
             >
               <QrCode size={16} />
               {showQR ? 'Ocultar tarjeta de fidelización' : 'Mostrar tarjeta de fidelización (QR)'}
@@ -286,7 +286,7 @@ function ClienteModal({ cliente: clienteInicial, onClose, onUpdated }) {
               <a
                 href={`${PUBLIC_URL}/fidelidad/${cliente.telefono}`}
                 target="_blank" rel="noopener noreferrer"
-                className="text-xs text-[#D4A853] font-medium underline break-all text-center"
+                className="text-xs text-[#4E5B3D] font-medium underline break-all text-center"
               >
                 {`${PUBLIC_URL}/fidelidad/${cliente.telefono}`}
               </a>
@@ -296,7 +296,7 @@ function ClienteModal({ cliente: clienteInicial, onClose, onUpdated }) {
 
         {/* Historial */}
         <div className="flex-1 overflow-y-auto px-6 py-4">
-          <h3 className="text-sm font-bold text-[#2C1810] mb-3">Historial de movimientos</h3>
+          <h3 className="text-sm font-bold text-[#42241A] mb-3">Historial de movimientos</h3>
           {historialLoading ? (
             <div className="space-y-2">
               {[1, 2, 3].map(i => (
@@ -310,7 +310,7 @@ function ClienteModal({ cliente: clienteInicial, onClose, onUpdated }) {
               {historial.map(h => (
                 <div key={h.id} className="flex items-center justify-between py-3">
                   <div>
-                    <p className="text-sm font-medium text-[#2C1810] capitalize">{h.concepto}</p>
+                    <p className="text-sm font-medium text-[#42241A] capitalize">{h.concepto}</p>
                     <p className="text-xs text-gray-400">
                       {new Date(h.created_at).toLocaleDateString('es-MX', {
                         day: 'numeric', month: 'short', year: 'numeric',
@@ -320,7 +320,7 @@ function ClienteModal({ cliente: clienteInicial, onClose, onUpdated }) {
                   </div>
                   <span className={`font-bold text-sm px-2 py-1 rounded-lg ${
                     h.puntos > 0
-                      ? 'text-[#D4A853] bg-[#D4A853]/10'
+                      ? 'text-[#4E5B3D] bg-[#4E5B3D]/10'
                       : 'text-red-600 bg-red-50'
                   }`}>
                     {h.puntos > 0 ? '+' : ''}{h.puntos}
@@ -371,45 +371,45 @@ function NuevoClienteModal({ onClose, onCreated }) {
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 flex items-center justify-center p-6">
       <div className="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl">
         <div className="flex justify-between items-center mb-5">
-          <h2 className="text-xl font-bold text-[#2C1810]">Nuevo Cliente</h2>
+          <h2 className="text-xl font-bold text-[#42241A]">Nuevo Cliente</h2>
           <button onClick={onClose} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-400">
             <X size={22} />
           </button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[#2C1810] mb-1">Nombre *</label>
+            <label className="block text-sm font-medium text-[#42241A] mb-1">Nombre *</label>
             <input
               value={form.nombre}
               onChange={e => setForm(f => ({ ...f, nombre: e.target.value }))}
               required placeholder="Nombre completo"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853]"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D]"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#2C1810] mb-1">Teléfono</label>
+            <label className="block text-sm font-medium text-[#42241A] mb-1">Teléfono</label>
             <input
               type="tel"
               value={form.telefono}
               onChange={e => setForm(f => ({ ...f, telefono: e.target.value.replace(/\D/g, '') }))}
               placeholder="10 dígitos"
               maxLength={10}
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853]"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D]"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#2C1810] mb-1">Email (opcional)</label>
+            <label className="block text-sm font-medium text-[#42241A] mb-1">Email (opcional)</label>
             <input
               type="email"
               value={form.email}
               onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
               placeholder="correo@ejemplo.com"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853]"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D]"
             />
           </div>
           <button
             type="submit" disabled={loading}
-            className="w-full bg-[#D4A853] hover:bg-[#c49843] disabled:opacity-60 text-[#2C1810] font-bold py-4 rounded-xl transition-colors min-h-[52px]"
+            className="w-full bg-[#4E5B3D] hover:bg-[#3E4A30] disabled:opacity-60 text-[#FAFAF7] font-bold py-4 rounded-xl transition-colors min-h-[52px]"
           >
             {loading ? 'Registrando...' : 'Registrar Cliente'}
           </button>
@@ -460,12 +460,12 @@ export default function Clientes() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-[#2C1810]">Clientes</h1>
+          <h1 className="text-2xl font-bold text-[#42241A]">Clientes</h1>
           <p className="text-sm text-gray-500 mt-0.5">{clientes.length} registrados</p>
         </div>
         <button
           onClick={() => setShowNuevo(true)}
-          className="flex items-center gap-2 bg-[#2C1810] hover:bg-[#5C3317] text-white font-semibold px-5 py-3 rounded-xl transition-colors min-h-[48px]"
+          className="flex items-center gap-2 bg-[#42241A] hover:bg-[#5C3A28] text-white font-semibold px-5 py-3 rounded-xl transition-colors min-h-[48px]"
         >
           <Plus size={20} />
           Nuevo Cliente
@@ -480,14 +480,14 @@ export default function Clientes() {
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder="Buscar por nombre o teléfono..."
-            className="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853] bg-white"
+            className="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D] bg-white"
           />
         </div>
         <div className="relative">
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value)}
-            className="appearance-none border border-gray-200 rounded-xl px-4 pr-10 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853] bg-white text-sm font-medium text-[#2C1810] min-h-[48px]"
+            className="appearance-none border border-gray-200 rounded-xl px-4 pr-10 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D] bg-white text-sm font-medium text-[#42241A] min-h-[48px]"
           >
             {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
@@ -498,7 +498,7 @@ export default function Clientes() {
       {/* Client list */}
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#D4A853] border-t-transparent" />
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#4E5B3D] border-t-transparent" />
         </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-20 text-gray-400">
@@ -515,16 +515,16 @@ export default function Clientes() {
               <button
                 key={cliente.id}
                 onClick={() => setSelectedCliente(cliente)}
-                className="w-full bg-white rounded-2xl p-4 shadow-sm border-2 border-transparent hover:border-[#D4A853] transition-all text-left min-h-[80px] flex items-center gap-4"
+                className="w-full bg-white rounded-2xl p-4 shadow-sm border-2 border-transparent hover:border-[#4E5B3D] transition-all text-left min-h-[80px] flex items-center gap-4"
               >
-                <div className="w-12 h-12 rounded-full bg-[#D4A853]/20 flex items-center justify-center shrink-0">
-                  <span className="text-lg font-bold text-[#D4A853]">
+                <div className="w-12 h-12 rounded-full bg-[#4E5B3D]/20 flex items-center justify-center shrink-0">
+                  <span className="text-lg font-bold text-[#4E5B3D]">
                     {cliente.nombre.charAt(0).toUpperCase()}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="font-semibold text-[#2C1810] truncate">{cliente.nombre}</p>
+                    <p className="font-semibold text-[#42241A] truncate">{cliente.nombre}</p>
                     {canjeable && (
                       <span className="shrink-0 bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">
                         Canjeable
@@ -537,7 +537,7 @@ export default function Clientes() {
                   </p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-xl font-bold text-[#D4A853]">{cliente.puntos_acumulados}</p>
+                  <p className="text-xl font-bold text-[#4E5B3D]">{cliente.puntos_acumulados}</p>
                   <p className="text-xs text-gray-400">puntos</p>
                   <p className="text-xs text-gray-400">{cliente.visitas} visitas</p>
                 </div>

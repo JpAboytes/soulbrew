@@ -36,7 +36,7 @@ function NuevoInsumoModal({ onClose, onSaved }) {
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 flex items-center justify-center p-6">
       <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-[#2C1810]">Nuevo Insumo</h2>
+          <h2 className="text-xl font-bold text-[#42241A]">Nuevo Insumo</h2>
           <button
             onClick={onClose}
             className="min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-xl"
@@ -47,22 +47,22 @@ function NuevoInsumoModal({ onClose, onSaved }) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[#2C1810] mb-1">Nombre *</label>
+            <label className="block text-sm font-medium text-[#42241A] mb-1">Nombre *</label>
             <input
               value={form.nombre}
               onChange={e => setForm(f => ({ ...f, nombre: e.target.value }))}
               required
               placeholder="Ej. Café espresso"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853]"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D]"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#2C1810] mb-1">Unidad *</label>
+            <label className="block text-sm font-medium text-[#42241A] mb-1">Unidad *</label>
             <select
               value={form.unidad}
               onChange={e => setForm(f => ({ ...f, unidad: e.target.value }))}
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853] bg-white"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D] bg-white"
             >
               {UNIDADES.map(u => (
                 <option key={u} value={u}>{u}</option>
@@ -72,7 +72,7 @@ function NuevoInsumoModal({ onClose, onSaved }) {
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-sm font-medium text-[#2C1810] mb-1">Stock actual</label>
+              <label className="block text-sm font-medium text-[#42241A] mb-1">Stock actual</label>
               <input
                 type="number"
                 min="0"
@@ -80,11 +80,11 @@ function NuevoInsumoModal({ onClose, onSaved }) {
                 value={form.stock_actual}
                 onChange={e => setForm(f => ({ ...f, stock_actual: e.target.value }))}
                 placeholder="0"
-                className="w-full border border-gray-200 rounded-xl px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853]"
+                className="w-full border border-gray-200 rounded-xl px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D]"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#2C1810] mb-1">Stock mín.</label>
+              <label className="block text-sm font-medium text-[#42241A] mb-1">Stock mín.</label>
               <input
                 type="number"
                 min="0"
@@ -92,11 +92,11 @@ function NuevoInsumoModal({ onClose, onSaved }) {
                 value={form.stock_minimo}
                 onChange={e => setForm(f => ({ ...f, stock_minimo: e.target.value }))}
                 placeholder="0"
-                className="w-full border border-gray-200 rounded-xl px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853]"
+                className="w-full border border-gray-200 rounded-xl px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D]"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#2C1810] mb-1">Costo/u</label>
+              <label className="block text-sm font-medium text-[#42241A] mb-1">Costo/u</label>
               <input
                 type="number"
                 min="0"
@@ -104,7 +104,7 @@ function NuevoInsumoModal({ onClose, onSaved }) {
                 value={form.costo_unitario}
                 onChange={e => setForm(f => ({ ...f, costo_unitario: e.target.value }))}
                 placeholder="0.00"
-                className="w-full border border-gray-200 rounded-xl px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853]"
+                className="w-full border border-gray-200 rounded-xl px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D]"
               />
             </div>
           </div>
@@ -112,7 +112,7 @@ function NuevoInsumoModal({ onClose, onSaved }) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#D4A853] hover:bg-[#c49843] disabled:opacity-60 text-[#2C1810] font-bold py-4 rounded-xl text-base transition-colors min-h-[52px]"
+            className="w-full bg-[#4E5B3D] hover:bg-[#3E4A30] disabled:opacity-60 text-[#FAFAF7] font-bold py-4 rounded-xl text-base transition-colors min-h-[52px]"
           >
             {loading ? 'Guardando...' : 'Guardar Insumo'}
           </button>
@@ -165,8 +165,8 @@ function RestockModal({ insumo, onClose, onSaved }) {
       <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h2 className="text-xl font-bold text-[#2C1810]">Restock</h2>
-            <p className="text-[#8B5A3C] text-sm">{insumo.nombre}</p>
+            <h2 className="text-xl font-bold text-[#42241A]">Restock</h2>
+            <p className="text-[#7C5A43] text-sm">{insumo.nombre}</p>
           </div>
           <button
             onClick={onClose}
@@ -179,7 +179,7 @@ function RestockModal({ insumo, onClose, onSaved }) {
         <div className="bg-gray-50 rounded-xl p-4 mb-5">
           <p className="text-sm text-gray-500">
             Stock actual:{' '}
-            <span className="font-bold text-[#2C1810]">
+            <span className="font-bold text-[#42241A]">
               {Number(insumo.stock_actual).toFixed(2)} {insumo.unidad}
             </span>
           </p>
@@ -187,7 +187,7 @@ function RestockModal({ insumo, onClose, onSaved }) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[#2C1810] mb-1">
+            <label className="block text-sm font-medium text-[#42241A] mb-1">
               Cantidad a agregar * ({insumo.unidad})
             </label>
             <input
@@ -198,12 +198,12 @@ function RestockModal({ insumo, onClose, onSaved }) {
               onChange={e => setCantidad(e.target.value)}
               required
               placeholder="0.00"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-[#D4A853]"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-[#4E5B3D]"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#2C1810] mb-1">
+            <label className="block text-sm font-medium text-[#42241A] mb-1">
               Costo total (opcional)
             </label>
             <input
@@ -213,12 +213,12 @@ function RestockModal({ insumo, onClose, onSaved }) {
               value={costo}
               onChange={e => setCosto(e.target.value)}
               placeholder="$0.00"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853]"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D]"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#2C1810] mb-1">
+            <label className="block text-sm font-medium text-[#42241A] mb-1">
               Notas (opcional)
             </label>
             <textarea
@@ -226,14 +226,14 @@ function RestockModal({ insumo, onClose, onSaved }) {
               onChange={e => setNotas(e.target.value)}
               placeholder="Proveedor, número de factura..."
               rows={2}
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853] resize-none"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D] resize-none"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#D4A853] hover:bg-[#c49843] disabled:opacity-60 text-[#2C1810] font-bold py-4 rounded-xl text-base transition-colors min-h-[52px]"
+            className="w-full bg-[#4E5B3D] hover:bg-[#3E4A30] disabled:opacity-60 text-[#FAFAF7] font-bold py-4 rounded-xl text-base transition-colors min-h-[52px]"
           >
             {loading ? 'Guardando...' : 'Confirmar Restock'}
           </button>
@@ -279,7 +279,7 @@ export default function Inventario() {
     <div className="p-6 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-[#2C1810]">Inventario</h1>
+          <h1 className="text-2xl font-bold text-[#42241A]">Inventario</h1>
           {criticalCount > 0 && (
             <p className="text-red-600 text-sm font-medium flex items-center gap-1 mt-1">
               <AlertTriangle size={14} />
@@ -289,7 +289,7 @@ export default function Inventario() {
         </div>
         <button
           onClick={() => setShowNuevo(true)}
-          className="flex items-center gap-2 bg-[#2C1810] hover:bg-[#5C3317] text-white font-semibold px-5 py-3 rounded-xl transition-colors min-h-[48px]"
+          className="flex items-center gap-2 bg-[#42241A] hover:bg-[#5C3A28] text-white font-semibold px-5 py-3 rounded-xl transition-colors min-h-[48px]"
         >
           <Plus size={20} />
           Nuevo Insumo
@@ -298,7 +298,7 @@ export default function Inventario() {
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#D4A853] border-t-transparent" />
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#4E5B3D] border-t-transparent" />
         </div>
       ) : insumos.length === 0 ? (
         <div className="text-center py-20 text-gray-400">

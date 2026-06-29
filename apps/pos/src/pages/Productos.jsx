@@ -76,7 +76,7 @@ function NuevoProductoModal({ onClose, onSaved }) {
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 flex items-center justify-center p-6">
       <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-[#2C1810]">Nuevo Producto</h2>
+          <h2 className="text-xl font-bold text-[#42241A]">Nuevo Producto</h2>
           <button
             onClick={onClose}
             className="min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-xl"
@@ -88,10 +88,10 @@ function NuevoProductoModal({ onClose, onSaved }) {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Upload de imagen */}
           <div>
-            <label className="block text-sm font-medium text-[#2C1810] mb-2">Imagen del producto</label>
+            <label className="block text-sm font-medium text-[#42241A] mb-2">Imagen del producto</label>
             <div
               onClick={() => fileRef.current.click()}
-              className="cursor-pointer w-full h-36 rounded-2xl border-2 border-dashed border-gray-200 hover:border-[#D4A853] transition-colors overflow-hidden flex items-center justify-center bg-[#FAFAF7]"
+              className="cursor-pointer w-full h-36 rounded-2xl border-2 border-dashed border-gray-200 hover:border-[#4E5B3D] transition-colors overflow-hidden flex items-center justify-center bg-[#FAFAF7]"
             >
               {imagePreview ? (
                 <img src={imagePreview} alt="preview" className="w-full h-full object-cover" />
@@ -122,44 +122,44 @@ function NuevoProductoModal({ onClose, onSaved }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#2C1810] mb-1">Nombre *</label>
+            <label className="block text-sm font-medium text-[#42241A] mb-1">Nombre *</label>
             <input
               value={form.nombre}
               onChange={e => setForm(f => ({ ...f, nombre: e.target.value }))}
               required
               placeholder="Ej. Cappuccino"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853]"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D]"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#2C1810] mb-1">Descripción</label>
+            <label className="block text-sm font-medium text-[#42241A] mb-1">Descripción</label>
             <textarea
               value={form.descripcion}
               onChange={e => setForm(f => ({ ...f, descripcion: e.target.value }))}
               placeholder="Descripción breve del producto"
               rows={2}
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853] resize-none"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D] resize-none"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-[#2C1810] mb-1">Precio *</label>
+              <label className="block text-sm font-medium text-[#42241A] mb-1">Precio *</label>
               <input
                 type="number" min="0" step="0.01"
                 value={form.precio}
                 onChange={e => setForm(f => ({ ...f, precio: e.target.value }))}
                 required placeholder="0.00"
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853]"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D]"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#2C1810] mb-1">Categoría *</label>
+              <label className="block text-sm font-medium text-[#42241A] mb-1">Categoría *</label>
               <select
                 value={form.categoria}
                 onChange={e => setForm(f => ({ ...f, categoria: e.target.value }))}
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853] bg-white"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D] bg-white"
               >
                 {CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
@@ -168,7 +168,7 @@ function NuevoProductoModal({ onClose, onSaved }) {
 
           <button
             type="submit" disabled={loading}
-            className="w-full bg-[#D4A853] hover:bg-[#c49843] disabled:opacity-60 text-[#2C1810] font-bold py-4 rounded-xl text-base transition-colors min-h-[52px]"
+            className="w-full bg-[#4E5B3D] hover:bg-[#3E4A30] disabled:opacity-60 text-[#FAFAF7] font-bold py-4 rounded-xl text-base transition-colors min-h-[52px]"
           >
             {loading
               ? imageFile ? 'Subiendo imagen...' : 'Guardando...'
@@ -230,8 +230,8 @@ function RecetaPanel({ producto, insumos }) {
 
   return (
     <div className="mt-4 pt-4 border-t border-gray-100">
-      <h4 className="text-sm font-semibold text-[#2C1810] mb-3 flex items-center gap-2">
-        <BookOpen size={15} className="text-[#D4A853]" />
+      <h4 className="text-sm font-semibold text-[#42241A] mb-3 flex items-center gap-2">
+        <BookOpen size={15} className="text-[#4E5B3D]" />
         Receta / Ingredientes
       </h4>
 
@@ -248,7 +248,7 @@ function RecetaPanel({ producto, insumos }) {
             <div className="space-y-2 mb-4">
               {receta.map(r => (
                 <div key={r.id} className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-2.5">
-                  <span className="text-sm font-medium text-[#2C1810]">{r.insumos.nombre}</span>
+                  <span className="text-sm font-medium text-[#42241A]">{r.insumos.nombre}</span>
                   <div className="flex items-center gap-3">
                     <span className="text-sm text-gray-500 font-mono">
                       {Number(r.cantidad) % 1 === 0
@@ -273,7 +273,7 @@ function RecetaPanel({ producto, insumos }) {
               No hay insumos en el sistema. Ve a <strong>Inventario</strong> y agrega insumos primero.
             </p>
           ) : availableInsumos.length === 0 ? (
-            <p className="text-xs text-[#8B5A3C] bg-[#D4A853]/10 border border-[#D4A853]/20 rounded-xl px-4 py-3">
+            <p className="text-xs text-[#7C5A43] bg-[#4E5B3D]/10 border border-[#4E5B3D]/20 rounded-xl px-4 py-3">
               Todos los insumos disponibles ya están en esta receta.
             </p>
           ) : (
@@ -281,7 +281,7 @@ function RecetaPanel({ producto, insumos }) {
               <select
                 value={selectedInsumo}
                 onChange={e => setSelectedInsumo(e.target.value)}
-                className="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4A853] bg-white min-h-[44px]"
+                className="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#4E5B3D] bg-white min-h-[44px]"
               >
                 <option value="">Seleccionar insumo...</option>
                 {availableInsumos.map(i => (
@@ -294,12 +294,12 @@ function RecetaPanel({ producto, insumos }) {
                 onChange={e => setCantidad(e.target.value)}
                 placeholder="Cant."
                 onKeyDown={e => e.key === 'Enter' && addIngrediente()}
-                className="w-24 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4A853] min-h-[44px]"
+                className="w-24 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#4E5B3D] min-h-[44px]"
               />
               <button
                 onClick={addIngrediente}
                 disabled={saving || !selectedInsumo || !cantidad || parseFloat(cantidad) <= 0}
-                className="bg-[#D4A853] hover:bg-[#c49843] disabled:opacity-50 text-[#2C1810] font-semibold px-4 rounded-xl text-sm transition-colors min-h-[44px] whitespace-nowrap"
+                className="bg-[#4E5B3D] hover:bg-[#3E4A30] disabled:opacity-50 text-[#FAFAF7] font-semibold px-4 rounded-xl text-sm transition-colors min-h-[44px] whitespace-nowrap"
               >
                 {saving ? '...' : '+ Agregar'}
               </button>
@@ -355,7 +355,7 @@ function ProductoRow({ producto, insumos, onToggle, onToast, defaultExpanded }) 
 
   return (
     <div className={`bg-white rounded-2xl shadow-sm border-2 transition-all ${
-      expanded ? 'border-[#D4A853]/40' : producto.activo ? 'border-transparent' : 'border-gray-100 opacity-60'
+      expanded ? 'border-[#4E5B3D]/40' : producto.activo ? 'border-transparent' : 'border-gray-100 opacity-60'
     }`}>
       <div className="flex items-center p-4 gap-4">
         {/* Thumbnail / upload */}
@@ -367,7 +367,7 @@ function ProductoRow({ producto, insumos, onToggle, onToast, defaultExpanded }) 
           {producto.imagen_url ? (
             <img src={producto.imagen_url} alt={producto.nombre} className="w-full h-full object-cover" />
           ) : (
-            <Coffee size={22} className="text-[#D4A853]/50" />
+            <Coffee size={22} className="text-[#4E5B3D]/50" />
           )}
           {/* Hover overlay */}
           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -376,7 +376,7 @@ function ProductoRow({ producto, insumos, onToggle, onToast, defaultExpanded }) 
           {/* Loading overlay */}
           {uploadingImage && (
             <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
-              <div className="animate-spin rounded-full h-5 w-5 border-2 border-[#D4A853] border-t-transparent" />
+              <div className="animate-spin rounded-full h-5 w-5 border-2 border-[#4E5B3D] border-t-transparent" />
             </div>
           )}
         </div>
@@ -391,8 +391,8 @@ function ProductoRow({ producto, insumos, onToggle, onToast, defaultExpanded }) 
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="font-semibold text-[#2C1810] text-lg">{producto.nombre}</h3>
-            <span className="text-xs bg-[#D4A853]/20 text-[#8B5A3C] px-2 py-1 rounded-full font-medium">
+            <h3 className="font-semibold text-[#42241A] text-lg">{producto.nombre}</h3>
+            <span className="text-xs bg-[#4E5B3D]/20 text-[#7C5A43] px-2 py-1 rounded-full font-medium">
               {producto.categoria}
             </span>
             {!producto.activo && (
@@ -404,7 +404,7 @@ function ProductoRow({ producto, insumos, onToggle, onToast, defaultExpanded }) 
           {producto.descripcion && (
             <p className="text-sm text-gray-500 mt-0.5 truncate">{producto.descripcion}</p>
           )}
-          <p className="text-xl font-bold text-[#D4A853] mt-1">${Number(producto.precio).toFixed(2)}</p>
+          <p className="text-xl font-bold text-[#4E5B3D] mt-1">${Number(producto.precio).toFixed(2)}</p>
         </div>
 
         {/* Acciones */}
@@ -423,7 +423,7 @@ function ProductoRow({ producto, insumos, onToggle, onToast, defaultExpanded }) 
           <button
             onClick={() => setExpanded(v => !v)}
             className={`min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors rounded-xl ${
-              expanded ? 'bg-[#D4A853]/10 text-[#2C1810]' : 'text-gray-400 hover:text-[#2C1810]'
+              expanded ? 'bg-[#4E5B3D]/10 text-[#42241A]' : 'text-gray-400 hover:text-[#42241A]'
             }`}
             title="Ver receta"
           >
@@ -471,10 +471,10 @@ export default function Productos() {
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-[#2C1810]">Productos</h1>
+        <h1 className="text-2xl font-bold text-[#42241A]">Productos</h1>
         <button
           onClick={() => setShowNuevo(true)}
-          className="flex items-center gap-2 bg-[#2C1810] hover:bg-[#5C3317] text-white font-semibold px-5 py-3 rounded-xl transition-colors min-h-[48px]"
+          className="flex items-center gap-2 bg-[#42241A] hover:bg-[#5C3A28] text-white font-semibold px-5 py-3 rounded-xl transition-colors min-h-[48px]"
         >
           <Plus size={20} />
           Nuevo Producto
@@ -488,8 +488,8 @@ export default function Productos() {
             onClick={() => setCategoriaFiltro(cat)}
             className={`px-4 py-2 rounded-xl font-medium text-sm whitespace-nowrap transition-colors min-h-[44px] ${
               categoriaFiltro === cat
-                ? 'bg-[#2C1810] text-white'
-                : 'bg-white text-[#2C1810] hover:bg-gray-100'
+                ? 'bg-[#42241A] text-white'
+                : 'bg-white text-[#42241A] hover:bg-gray-100'
             }`}
           >
             {cat}
@@ -499,7 +499,7 @@ export default function Productos() {
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#D4A853] border-t-transparent" />
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#4E5B3D] border-t-transparent" />
         </div>
       ) : filteredProductos.length === 0 ? (
         <div className="text-center py-20 text-gray-400">

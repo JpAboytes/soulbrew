@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Coffee, Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -42,14 +42,11 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-[#2C1810] flex items-center justify-center p-6">
+    <div className="min-h-screen bg-[#42241A] flex items-center justify-center p-6">
       <div className="bg-[#FAFAF7] rounded-3xl p-8 w-full max-w-md shadow-2xl">
         <div className="flex flex-col items-center mb-8">
-          <div className="bg-[#D4A853] p-4 rounded-2xl mb-4 shadow-lg">
-            <Coffee size={40} className="text-[#2C1810]" />
-          </div>
-          <h1 className="text-3xl font-bold text-[#2C1810]">Soulbrew</h1>
-          <p className="text-[#8B5A3C] mt-1 text-sm">Sistema de Cafetería</p>
+          <img src="/logo-light.png" alt="Soulbrew" className="h-24 w-auto mb-3" />
+          <p className="text-[#7C5A43] text-sm">Sistema de Cafetería</p>
         </div>
 
         {message && (
@@ -66,7 +63,7 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[#2C1810] mb-2">
+            <label className="block text-sm font-medium text-[#42241A] mb-2">
               Correo electrónico
             </label>
             <input
@@ -75,12 +72,12 @@ export default function Login() {
               onChange={e => setEmail(e.target.value)}
               required
               placeholder="correo@ejemplo.com"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#D4A853] bg-white"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#4E5B3D] bg-white"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#2C1810] mb-2">Contraseña</label>
+            <label className="block text-sm font-medium text-[#42241A] mb-2">Contraseña</label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -88,7 +85,7 @@ export default function Login() {
                 onChange={e => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-12 text-base focus:outline-none focus:ring-2 focus:ring-[#D4A853] bg-white"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-12 text-base focus:outline-none focus:ring-2 focus:ring-[#4E5B3D] bg-white"
               />
               <button
                 type="button"
@@ -103,7 +100,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#D4A853] hover:bg-[#c49843] disabled:opacity-60 text-[#2C1810] font-bold py-4 rounded-xl text-lg transition-colors min-h-[56px] mt-2"
+            className="w-full bg-[#4E5B3D] hover:bg-[#3E4A30] disabled:opacity-60 text-[#FAFAF7] font-bold py-4 rounded-xl text-lg transition-colors min-h-[56px] mt-2"
           >
             {loading ? 'Cargando...' : mode === 'login' ? 'Entrar' : 'Crear cuenta'}
           </button>
@@ -116,7 +113,7 @@ export default function Login() {
               setMode(mode === 'login' ? 'register' : 'login')
               setMessage(null)
             }}
-            className="text-[#D4A853] font-semibold hover:underline"
+            className="text-[#4E5B3D] font-semibold hover:underline"
           >
             {mode === 'login' ? 'Registrarse' : 'Iniciar sesión'}
           </button>

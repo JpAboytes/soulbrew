@@ -106,18 +106,18 @@ export default function Asistente() {
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white shrink-0">
         <div className="flex items-center gap-3">
-          <div className="bg-[#D4A853] p-2 rounded-xl">
-            <Sparkles size={20} className="text-[#2C1810]" />
+          <div className="bg-[#4E5B3D] p-2 rounded-xl">
+            <Sparkles size={20} className="text-[#FAFAF7]" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-[#2C1810]">Asistente</h1>
-            <p className="text-xs text-[#8B5A3C]">Pregúntale sobre tus ventas, productos e inventario</p>
+            <h1 className="text-lg font-bold text-[#42241A]">Asistente</h1>
+            <p className="text-xs text-[#7C5A43]">Pregúntale sobre tus ventas, productos e inventario</p>
           </div>
         </div>
         {messages.length > 0 && (
           <button
             onClick={nuevaConversacion}
-            className="flex items-center gap-2 text-sm text-gray-500 hover:text-[#2C1810] min-h-[44px] px-3 rounded-xl hover:bg-gray-100 transition-colors"
+            className="flex items-center gap-2 text-sm text-gray-500 hover:text-[#42241A] min-h-[44px] px-3 rounded-xl hover:bg-gray-100 transition-colors"
           >
             <RotateCcw size={16} />
             Nueva
@@ -130,10 +130,10 @@ export default function Asistente() {
         <div className="max-w-2xl mx-auto space-y-4">
           {messages.length === 0 && (
             <div className="text-center pt-8">
-              <div className="bg-[#D4A853]/15 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Sparkles size={28} className="text-[#D4A853]" />
+              <div className="bg-[#4E5B3D]/15 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Sparkles size={28} className="text-[#4E5B3D]" />
               </div>
-              <h2 className="text-xl font-bold text-[#2C1810]">¿En qué te ayudo hoy?</h2>
+              <h2 className="text-xl font-bold text-[#42241A]">¿En qué te ayudo hoy?</h2>
               <p className="text-sm text-gray-500 mt-1 mb-6">
                 Analizo tus datos de Soulbrew y te respondo en lenguaje natural.
               </p>
@@ -142,7 +142,7 @@ export default function Asistente() {
                   <button
                     key={s}
                     onClick={() => enviar(s)}
-                    className="text-left text-sm bg-white border border-gray-200 hover:border-[#D4A853] rounded-2xl px-4 py-3 transition-colors text-[#2C1810] min-h-[52px]"
+                    className="text-left text-sm bg-white border border-gray-200 hover:border-[#4E5B3D] rounded-2xl px-4 py-3 transition-colors text-[#42241A] min-h-[52px]"
                   >
                     {s}
                   </button>
@@ -162,7 +162,7 @@ export default function Asistente() {
                 <div
                   className={`rounded-2xl px-4 py-3 text-sm max-w-[85%] ${
                     m.role === 'user'
-                      ? 'bg-[#2C1810] text-white whitespace-pre-wrap leading-relaxed'
+                      ? 'bg-[#42241A] text-white whitespace-pre-wrap leading-relaxed'
                       : 'bg-white border border-gray-100 shadow-sm'
                   }`}
                 >
@@ -175,9 +175,9 @@ export default function Asistente() {
           {loading && (
             <div className="flex justify-start">
               <div className="bg-white border border-gray-100 rounded-2xl px-4 py-3 shadow-sm flex items-center gap-1.5">
-                <span className="w-2 h-2 bg-[#D4A853] rounded-full animate-bounce [animation-delay:-0.3s]" />
-                <span className="w-2 h-2 bg-[#D4A853] rounded-full animate-bounce [animation-delay:-0.15s]" />
-                <span className="w-2 h-2 bg-[#D4A853] rounded-full animate-bounce" />
+                <span className="w-2 h-2 bg-[#4E5B3D] rounded-full animate-bounce [animation-delay:-0.3s]" />
+                <span className="w-2 h-2 bg-[#4E5B3D] rounded-full animate-bounce [animation-delay:-0.15s]" />
+                <span className="w-2 h-2 bg-[#4E5B3D] rounded-full animate-bounce" />
               </div>
             </div>
           )}
@@ -199,12 +199,12 @@ export default function Asistente() {
             }}
             placeholder="Escribe tu pregunta..."
             rows={1}
-            className="flex-1 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4A853] resize-none max-h-32 min-h-[52px]"
+            className="flex-1 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4E5B3D] resize-none max-h-32 min-h-[52px]"
           />
           <button
             type="submit"
             disabled={loading || !input.trim()}
-            className="bg-[#D4A853] hover:bg-[#c49843] disabled:opacity-50 text-[#2C1810] font-bold rounded-2xl w-[52px] h-[52px] flex items-center justify-center shrink-0 transition-colors"
+            className="bg-[#4E5B3D] hover:bg-[#3E4A30] disabled:opacity-50 text-[#FAFAF7] font-bold rounded-2xl w-[52px] h-[52px] flex items-center justify-center shrink-0 transition-colors"
           >
             <Send size={20} />
           </button>

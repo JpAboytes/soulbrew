@@ -33,44 +33,44 @@ function RegistrarClienteModal({ telefonoInicial, onClose, onRegistered }) {
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-6">
       <div className="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl">
         <div className="flex justify-between items-center mb-5">
-          <h2 className="text-xl font-bold text-[#2C1810]">Registrar Cliente</h2>
+          <h2 className="text-xl font-bold text-[#42241A]">Registrar Cliente</h2>
           <button onClick={onClose} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-400">
             <X size={22} />
           </button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
-            <label className="block text-sm font-medium text-[#2C1810] mb-1">Nombre *</label>
+            <label className="block text-sm font-medium text-[#42241A] mb-1">Nombre *</label>
             <input
               value={form.nombre}
               onChange={e => setForm(f => ({ ...f, nombre: e.target.value }))}
               required autoFocus placeholder="Nombre completo"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853]"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D]"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#2C1810] mb-1">Teléfono</label>
+            <label className="block text-sm font-medium text-[#42241A] mb-1">Teléfono</label>
             <input
               type="tel"
               value={form.telefono}
               onChange={e => setForm(f => ({ ...f, telefono: e.target.value.replace(/\D/g, '') }))}
               placeholder="10 dígitos" maxLength={10}
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853]"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D]"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#2C1810] mb-1">Email (opcional)</label>
+            <label className="block text-sm font-medium text-[#42241A] mb-1">Email (opcional)</label>
             <input
               type="email"
               value={form.email}
               onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
               placeholder="correo@ejemplo.com"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#D4A853]"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E5B3D]"
             />
           </div>
           <button
             type="submit" disabled={loading}
-            className="w-full bg-[#D4A853] hover:bg-[#c49843] disabled:opacity-60 text-[#2C1810] font-bold py-3.5 rounded-xl transition-colors min-h-[52px] mt-1"
+            className="w-full bg-[#4E5B3D] hover:bg-[#3E4A30] disabled:opacity-60 text-[#FAFAF7] font-bold py-3.5 rounded-xl transition-colors min-h-[52px] mt-1"
           >
             {loading ? 'Registrando...' : 'Registrar y seleccionar'}
           </button>
@@ -94,12 +94,12 @@ function VentaResumenModal({ resumen, onClose }) {
         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <CheckCircle size={32} className="text-green-600" />
         </div>
-        <h2 className="text-xl font-bold text-[#2C1810] mb-1">¡Venta registrada!</h2>
+        <h2 className="text-xl font-bold text-[#42241A] mb-1">¡Venta registrada!</h2>
 
         <div className="bg-gray-50 rounded-2xl p-4 my-4 space-y-2 text-left">
           <div className="flex justify-between">
             <span className="text-sm text-gray-500">Total cobrado</span>
-            <span className="font-bold text-[#2C1810]">${resumen.totalCobrado.toFixed(2)}</span>
+            <span className="font-bold text-[#42241A]">${resumen.totalCobrado.toFixed(2)}</span>
           </div>
           {resumen.descuento > 0 && (
             <div className="flex justify-between">
@@ -112,11 +112,11 @@ function VentaResumenModal({ resumen, onClose }) {
               <div className="border-t border-gray-200 my-1" />
               <div className="flex justify-between">
                 <span className="text-sm text-gray-500">Cliente</span>
-                <span className="font-semibold text-[#2C1810]">{resumen.cliente.nombre}</span>
+                <span className="font-semibold text-[#42241A]">{resumen.cliente.nombre}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-500">Puntos ganados</span>
-                <span className="font-bold text-[#D4A853]">+{resumen.puntosGanados} pts</span>
+                <span className="font-bold text-[#4E5B3D]">+{resumen.puntosGanados} pts</span>
               </div>
               {resumen.puntosCanjeados > 0 && (
                 <div className="flex justify-between">
@@ -125,8 +125,8 @@ function VentaResumenModal({ resumen, onClose }) {
                 </div>
               )}
               <div className="flex justify-between border-t border-gray-200 pt-2 mt-1">
-                <span className="text-sm font-semibold text-[#2C1810]">Puntos totales</span>
-                <span className="font-bold text-[#D4A853]">{resumen.nuevosTotales} pts</span>
+                <span className="text-sm font-semibold text-[#42241A]">Puntos totales</span>
+                <span className="font-bold text-[#4E5B3D]">{resumen.nuevosTotales} pts</span>
               </div>
             </>
           )}
@@ -134,7 +134,7 @@ function VentaResumenModal({ resumen, onClose }) {
 
         <button
           onClick={onClose}
-          className="w-full bg-[#2C1810] hover:bg-[#5C3317] text-white font-bold py-3.5 rounded-xl transition-colors min-h-[52px]"
+          className="w-full bg-[#42241A] hover:bg-[#5C3A28] text-white font-bold py-3.5 rounded-xl transition-colors min-h-[52px]"
         >
           Nueva venta
         </button>
@@ -349,8 +349,8 @@ export default function Vender() {
               onClick={() => setCategoria(cat)}
               className={`px-5 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-colors min-h-[44px] ${
                 categoria === cat
-                  ? 'bg-[#2C1810] text-white'
-                  : 'bg-white text-[#2C1810] hover:bg-gray-100 border border-gray-100'
+                  ? 'bg-[#42241A] text-white'
+                  : 'bg-white text-[#42241A] hover:bg-gray-100 border border-gray-100'
               }`}
             >
               {cat}
@@ -361,7 +361,7 @@ export default function Vender() {
         <div className="flex-1 overflow-y-auto p-4">
           {loading ? (
             <div className="flex justify-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#D4A853] border-t-transparent" />
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#4E5B3D] border-t-transparent" />
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-20 text-gray-400">
@@ -382,10 +382,10 @@ export default function Vender() {
         {/* Header */}
         <div className="px-5 py-4 border-b border-gray-100 shrink-0">
           <div className="flex items-center gap-2">
-            <ShoppingCart size={20} className="text-[#2C1810]" />
-            <h2 className="font-bold text-[#2C1810] text-lg">Carrito</h2>
+            <ShoppingCart size={20} className="text-[#42241A]" />
+            <h2 className="font-bold text-[#42241A] text-lg">Carrito</h2>
             {totalItems > 0 && (
-              <span className="ml-auto bg-[#D4A853] text-[#2C1810] text-sm font-bold rounded-full min-w-[24px] h-6 flex items-center justify-center px-1.5">
+              <span className="ml-auto bg-[#4E5B3D] text-[#FAFAF7] text-sm font-bold rounded-full min-w-[24px] h-6 flex items-center justify-center px-1.5">
                 {totalItems}
               </span>
             )}
@@ -407,11 +407,11 @@ export default function Vender() {
                   onChange={e => setClienteQuery(e.target.value.replace(/\D/g, ''))}
                   placeholder="Teléfono del cliente"
                   maxLength={10}
-                  className="w-full border border-gray-200 rounded-xl pl-9 pr-8 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4A853] min-h-[44px]"
+                  className="w-full border border-gray-200 rounded-xl pl-9 pr-8 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#4E5B3D] min-h-[44px]"
                 />
                 {clienteBuscando && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <div className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-[#D4A853] border-t-transparent" />
+                    <div className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-[#4E5B3D] border-t-transparent" />
                   </div>
                 )}
                 {clienteQuery && !clienteBuscando && (
@@ -428,10 +428,10 @@ export default function Vender() {
               {clienteEncontrado && (
                 <button
                   onClick={() => seleccionarCliente(clienteEncontrado)}
-                  className="mt-2 w-full bg-[#D4A853]/10 hover:bg-[#D4A853]/20 border border-[#D4A853]/30 rounded-xl px-3 py-2.5 text-left transition-colors"
+                  className="mt-2 w-full bg-[#4E5B3D]/10 hover:bg-[#4E5B3D]/20 border border-[#4E5B3D]/30 rounded-xl px-3 py-2.5 text-left transition-colors"
                 >
-                  <p className="font-semibold text-[#2C1810] text-sm">{clienteEncontrado.nombre}</p>
-                  <p className="text-xs text-[#8B5A3C]">
+                  <p className="font-semibold text-[#42241A] text-sm">{clienteEncontrado.nombre}</p>
+                  <p className="text-xs text-[#7C5A43]">
                     {clienteEncontrado.puntos_acumulados} pts · {clienteEncontrado.visitas} visitas
                   </p>
                 </button>
@@ -442,7 +442,7 @@ export default function Vender() {
                 <div className="mt-2 flex gap-2">
                   <button
                     onClick={() => setShowRegistrar(true)}
-                    className="flex-1 bg-[#2C1810] hover:bg-[#5C3317] text-white text-xs font-semibold rounded-xl py-2.5 min-h-[40px] transition-colors"
+                    className="flex-1 bg-[#42241A] hover:bg-[#5C3A28] text-white text-xs font-semibold rounded-xl py-2.5 min-h-[40px] transition-colors"
                   >
                     + Registrar nuevo
                   </button>
@@ -461,11 +461,11 @@ export default function Vender() {
             </>
           ) : (
             /* Cliente seleccionado */
-            <div className="flex items-center gap-2 bg-[#D4A853]/10 rounded-xl px-3 py-2.5">
-              <User size={16} className="text-[#D4A853] shrink-0" />
+            <div className="flex items-center gap-2 bg-[#4E5B3D]/10 rounded-xl px-3 py-2.5">
+              <User size={16} className="text-[#4E5B3D] shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-[#2C1810] text-sm truncate">{clienteSeleccionado.nombre}</p>
-                <p className="text-xs text-[#8B5A3C]">
+                <p className="font-semibold text-[#42241A] text-sm truncate">{clienteSeleccionado.nombre}</p>
+                <p className="text-xs text-[#7C5A43]">
                   {clienteSeleccionado.puntos_acumulados} pts disponibles
                 </p>
               </div>
@@ -492,7 +492,7 @@ export default function Vender() {
               <div key={item.id} className="bg-gray-50 rounded-2xl p-3">
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-[#2C1810] text-sm leading-tight truncate">{item.nombre}</p>
+                    <p className="font-medium text-[#42241A] text-sm leading-tight truncate">{item.nombre}</p>
                     {!productosConReceta.has(item.id) && (
                       <p className="text-xs text-amber-600 flex items-center gap-1 mt-0.5">
                         <AlertTriangle size={10} />Sin receta
@@ -514,7 +514,7 @@ export default function Vender() {
                     >
                       <Minus size={12} />
                     </button>
-                    <span className="font-bold text-[#2C1810] w-5 text-center text-sm">{item.cantidad}</span>
+                    <span className="font-bold text-[#42241A] w-5 text-center text-sm">{item.cantidad}</span>
                     <button
                       onClick={() => updateCantidad(item.id, 1)}
                       className="bg-white border border-gray-200 rounded-lg min-h-[32px] min-w-[32px] flex items-center justify-center hover:bg-gray-100 transition-colors"
@@ -522,7 +522,7 @@ export default function Vender() {
                       <Plus size={12} />
                     </button>
                   </div>
-                  <p className="font-bold text-[#D4A853] text-sm">
+                  <p className="font-bold text-[#4E5B3D] text-sm">
                     ${(item.precio * item.cantidad).toFixed(2)}
                   </p>
                 </div>
@@ -536,9 +536,9 @@ export default function Vender() {
           <div className="border-t border-gray-100 p-4 space-y-3 shrink-0">
             {/* Canje de puntos */}
             {clienteSeleccionado && maxCanje >= 100 && (
-              <div className="bg-[#D4A853]/10 rounded-xl p-3 border border-[#D4A853]/20">
-                <p className="text-xs font-bold text-[#2C1810] mb-2 flex items-center gap-1">
-                  <Star size={12} className="text-[#D4A853]" />
+              <div className="bg-[#4E5B3D]/10 rounded-xl p-3 border border-[#4E5B3D]/20">
+                <p className="text-xs font-bold text-[#42241A] mb-2 flex items-center gap-1">
+                  <Star size={12} className="text-[#4E5B3D]" />
                   Canjear puntos
                 </p>
                 <div className="flex items-center gap-2">
@@ -550,7 +550,7 @@ export default function Vender() {
                     <Minus size={12} />
                   </button>
                   <div className="flex-1 text-center">
-                    <p className="font-bold text-[#2C1810] text-base">{puntosACanjear} pts</p>
+                    <p className="font-bold text-[#42241A] text-base">{puntosACanjear} pts</p>
                     {puntosACanjear > 0 && (
                       <p className="text-xs text-green-600 font-semibold">−${descuento.toFixed(2)}</p>
                     )}
@@ -594,8 +594,8 @@ export default function Vender() {
                     onClick={() => setMetodoPago(value)}
                     className={`flex flex-col items-center justify-center gap-1 rounded-xl py-2 min-h-[52px] border text-xs font-semibold transition-colors ${
                       metodoPago === value
-                        ? 'bg-[#2C1810] text-white border-[#2C1810]'
-                        : 'bg-white text-[#2C1810] border-gray-200 hover:bg-gray-50'
+                        ? 'bg-[#42241A] text-white border-[#42241A]'
+                        : 'bg-white text-[#42241A] border-gray-200 hover:bg-gray-50'
                     }`}
                   >
                     <Icon size={16} />
@@ -611,7 +611,7 @@ export default function Vender() {
               onChange={e => setNotas(e.target.value)}
               placeholder="Notas de la venta..."
               rows={2}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4A853] resize-none"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#4E5B3D] resize-none"
             />
 
             {/* Total */}
@@ -629,8 +629,8 @@ export default function Vender() {
                 </div>
               )}
               <div className="flex justify-between items-baseline">
-                <span className="font-bold text-[#2C1810]">Total</span>
-                <span className="text-2xl font-bold text-[#2C1810]">${totalFinal.toFixed(2)}</span>
+                <span className="font-bold text-[#42241A]">Total</span>
+                <span className="text-2xl font-bold text-[#42241A]">${totalFinal.toFixed(2)}</span>
               </div>
             </div>
 
@@ -638,7 +638,7 @@ export default function Vender() {
             <button
               onClick={confirmarVenta}
               disabled={confirming}
-              className="w-full bg-[#D4A853] hover:bg-[#c49843] disabled:opacity-60 text-[#2C1810] font-bold py-4 rounded-xl text-base transition-colors min-h-[56px]"
+              className="w-full bg-[#4E5B3D] hover:bg-[#3E4A30] disabled:opacity-60 text-[#FAFAF7] font-bold py-4 rounded-xl text-base transition-colors min-h-[56px]"
             >
               {confirming ? 'Procesando...' : 'Confirmar Venta'}
             </button>

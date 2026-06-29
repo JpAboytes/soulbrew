@@ -166,11 +166,15 @@ Chat para preguntarle a un agente sobre ventas/productos/inventario/clientes.
 ## Convenciones de UI / estilo
 
 - **iPad-first**: targets táctiles con `min-h-[44px]` (o más) en botones/inputs. Respétalo.
-- Paleta de marca (definida en `tailwind.config.js`, pero el código usa los hex directamente):
-  - `#2C1810` café oscuro (`coffee.dark`) · `#5C3317` (`coffee.medium`) · `#8B5A3C` (`coffee.light`)
-  - `#D4A853` dorado/acento (`gold`) · `#FAFAF7` crema/fondo (`cream`)
+- **Paleta de marca** (derivada del logo Soulbrew: verde olivo + café espresso. Definida en
+  `tailwind.config.js`, pero el código usa los hex directamente):
+  - `#42241A` café espresso (`coffee.dark`, estructura/texto) · `#5C3A28` (`coffee.medium`) · `#7C5A43` (`coffee.light`, texto muteado)
+  - `#4E5B3D` verde olivo (`olive`/`gold`, **acento/CTA**): fondos de botón con texto **crema**, anillos de foco, bordes, íconos/texto sobre fondos claros
+  - `#AEBB92` salvia clara (`salvia`): texto/íconos de acento **sobre fondos oscuros** (p. ej. el número de puntos en la tarjeta de fidelidad)
+  - `#FAFAF7` crema/fondo (`cream`)
+  - El logo **ya no es un ícono de `lucide`**: usa los PNG transparentes `/(/logo-light.png)` (sobre fondos claros) y `/logo-dark.png` (sobre fondos oscuros), servidos desde `apps/<app>/public/`. Favicon: `/favicon.png`. Originales en `public/` (raíz).
 - Patrones repetidos: modales con `fixed inset-0 bg-black/...backdrop-blur-sm`, tarjetas `rounded-2xl/3xl`,
-  spinners con `animate-spin border-[#D4A853] border-t-transparent`, toasts efímeros.
+  spinners con `animate-spin border-[#4E5B3D] border-t-transparent`, toasts efímeros.
 - Manejo de errores actual: mayormente `alert(error.message)` en modales y `<Toast>`/banner en páginas. Es el patrón existente; mantenlo salvo que se pida mejorarlo.
 - Realtime: `Layout.jsx` se suscribe a cambios de la tabla `insumos` (Supabase channel) para el badge de insumos críticos.
 

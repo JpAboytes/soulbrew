@@ -20,10 +20,10 @@ export function maxCanjeable(puntos) {
 // Nivel del cliente para la tarjeta pública. Devuelve datos sin UI.
 export function getNivel(puntos) {
   if (puntos >= NIVEL_VIP) {
-    return { nivel: 'vip', msg: '¡Cliente VIP! Gracias por tu preferencia', color: '#D4A853' }
+    return { nivel: 'vip', msg: '¡Cliente VIP! Gracias por tu preferencia', color: '#4E5B3D' }
   }
   if (puntos >= NIVEL_RECOMPENSA) {
     return { nivel: 'recompensa', msg: '¡Ya tienes una recompensa disponible!', color: '#22c55e' }
   }
-  return { nivel: 'inicio', msg: '¡Estás empezando tu aventura!', color: '#8B5A3C' }
+  return { nivel: 'inicio', msg: '¡Estás empezando tu aventura!', color: '#7C5A43' }
 }
