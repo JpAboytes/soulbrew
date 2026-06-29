@@ -73,11 +73,19 @@ apps/pos/src/              # POS/admin (protegido por auth)
     Reportes.jsx           #   corte de caja del día + reporteo diario y mensual
     Asistente.jsx          #   chat con el agente de IA (n8n)
 
-apps/cliente/src/          # App pública del cliente (sin auth)
+apps/cliente/src/          # App pública del cliente (sin auth, móvil-first)
   main.jsx, App.jsx, index.css
   lib/supabase.js          #   usa el factory de @soulbrew/core
-  pages/FidelidadPublica.jsx  # tarjeta de fidelización + Google Wallet
+  components/RegistroModal.jsx  # popup de alta a fidelidad → tarjeta + Google Wallet
+  pages/
+    Menu.jsx               #   home: carta de la cafetería (productos activos) + CTA de fidelidad
+    FidelidadPublica.jsx   #   tarjeta de fidelización + Google Wallet
 ```
+
+> **Tipografía del cliente** (solo `apps/cliente`): display **Fraunces** + texto **DM Sans**
+> (cargadas en `index.html`, expuestas como `font-display` / `font-sans` en su
+> `tailwind.config.js`). El POS sigue con `system-ui`. La paleta de marca también suma los
+> tokens `paper` (#F4EFE4) y `line` (#E2D9C8) en el cliente.
 
 ### Rutas
 
@@ -99,8 +107,9 @@ Las rutas protegidas se envuelven en `<ProtectedRoute>` → `<Layout>` (sidebar)
 
 | Ruta | Descripción |
 |------|-------------|
+| `/` | **Home: carta/menú** de la cafetería (productos activos) + popup de alta a fidelidad |
 | `/fidelidad/:telefono` | Tarjeta de fidelización del cliente (consulta por teléfono) + Google Wallet |
-| `/` y resto | Pantalla simple "pide tu enlace en caja" |
+| resto | Redirige a `/` |
 
 ## Modelo de datos (Supabase Postgres)
 
@@ -124,6 +133,11 @@ Inferido del código. Verifica con el MCP de Supabase antes de cambios de schema
 
 ### RPC
 - **`descontar_insumos_venta(p_venta_id)`** — descuenta inventario según las recetas de los productos vendidos. Se llama tras insertar la venta y sus items.
+
+### Edge Functions (Deno) — `supabase/functions/`, deploy vía MCP `deploy_edge_function`
+- **`wallet-google-link`** (`verify_jwt`) — genera/actualiza el LoyaltyObject y devuelve el `saveUrl` de Google Wallet para un teléfono existente. La consume `FidelidadPublica.jsx` y `RegistroModal.jsx`.
+- **`wallet-google-sync`** (sin `verify_jwt`, header secreto) — la llama el webhook de `clientes` para reflejar cambios de puntos en el wallet.
+- **`cliente-registro`** (`verify_jwt`) — alta pública a fidelidad desde `RegistroModal.jsx`: valida nombre + teléfono (10 díg.) con el **service_role**, evita duplicados (devuelve `{ cliente, yaExistia }`) e inserta en `clientes`. Existe porque la anon key **no** tiene `INSERT` en `clientes`.
 
 ### Funciones de analítica (para el agente de IA)
 Funciones `SECURITY DEFINER` de solo lectura que devuelven `jsonb`, concedidas **solo a
@@ -183,4 +197,4 @@ Chat para preguntarle a un agente sobre ventas/productos/inventario/clientes.
 - Idioma: nombres de variables/UI/commits en español, siguiendo el código existente.
 - Al añadir queries, sigue el patrón `const { data, error } = await supabase.from(...)...`.
 - El README describe páginas desactualizadas (no menciona Clientes/Fidelidad); esta CLAUDE.md es la referencia actual.
-- RLS: la app usa la anon key; las políticas de seguridad viven en Supabase. La ruta pública de fidelidad consulta `clientes`/`puntos_historial` sin sesión, así que esas tablas tienen lectura pública por teléfono.
+- RLS: la app usa la anon key; las políticas de seguridad viven en Supabase. La ruta pública de fidelidad consulta `clientes`/`puntos_historial` sin sesión (lectura pública). El **menú** del cliente lee `productos` con la policy `anon_read_productos_activos` (solo `activo = true`). El **alta** de clientes NO se hace con la anon key (sin `INSERT`): pasa por la Edge Function `cliente-registro` (service_role).

@@ -4,7 +4,8 @@ Monorepo (npm workspaces) con dos apps web que comparten un solo backend Supabas
 
 - **`apps/pos`** — POS/admin iPad-first (con auth): ventas, inventario, productos, clientes,
   reportes/corte de caja y asistente de IA.
-- **`apps/cliente`** — App pública del cliente (sin auth): tarjeta de fidelización + Google Wallet.
+- **`apps/cliente`** — App pública del cliente (sin auth, móvil-first): menú de la cafetería,
+  alta al programa de fidelización y tarjeta + Google Wallet.
 - **`packages/core`** — código compartido (factory del cliente Supabase + lógica de fidelización).
 
 ## Stack

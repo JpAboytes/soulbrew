@@ -1,0 +1,217 @@
+import { useState, useEffect, useRef } from 'react'
+import { X, Wallet, ArrowRight, Check, Coffee } from 'lucide-react'
+import { supabase } from '../lib/supabase'
+
+// Popup de alta al programa de fidelización: datos sencillos (nombre + teléfono) →
+// se crea la tarjeta (Edge Function `cliente-registro`) → se muestra la tarjeta recién
+// nacida con el botón para guardarla en Google Wallet. Apple Wallet llega después.
+
+function soloDigitos(v) {
+  return v.replace(/\D/g, '').slice(0, 10)
+}
+
+export default function RegistroModal({ onClose }) {
+  const [step, setStep] = useState('form')          // 'form' | 'done'
+  const [nombre, setNombre] = useState('')
+  const [telefono, setTelefono] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+
+  const [cliente, setCliente] = useState(null)
+  const [yaExistia, setYaExistia] = useState(false)
+
+  const [walletLoading, setWalletLoading] = useState(false)
+  const [walletError, setWalletError] = useState(null)
+
+  const nombreRef = useRef(null)
+  const telValida = telefono.length === 10
+  const formValido = nombre.trim().length >= 2 && telValida
+
+  // Foco inicial + cerrar con Escape.
+  useEffect(() => {
+    nombreRef.current?.focus()
+    const onKey = (e) => e.key === 'Escape' && onClose()
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
+
+  async function crearTarjeta(e) {
+    e.preventDefault()
+    if (!formValido || loading) return
+    setError(null)
+    setLoading(true)
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke('cliente-registro', {
+        body: { nombre: nombre.trim(), telefono },
+      })
+      if (fnError) throw fnError
+      if (data?.error) throw new Error(data.error)
+      if (!data?.cliente) throw new Error('No recibimos tu tarjeta. Intenta de nuevo.')
+      setCliente(data.cliente)
+      setYaExistia(Boolean(data.yaExistia))
+      setStep('done')
+    } catch (err) {
+      setError(err.message || 'No pudimos crear tu tarjeta. Revisa tus datos.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function agregarAGoogleWallet() {
+    setWalletError(null)
+    setWalletLoading(true)
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke('wallet-google-link', {
+        body: { telefono: cliente.telefono },
+      })
+      if (fnError) throw fnError
+      if (!data?.saveUrl) throw new Error('No se recibió el enlace de Google Wallet')
+      window.location.href = data.saveUrl
+    } catch (err) {
+      setWalletError(err.message || 'No se pudo generar la tarjeta')
+      setWalletLoading(false)
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-coffee-dark/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-6"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        className="bg-cream w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[92vh] overflow-y-auto animate-rise"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Barra superior */}
+        <div className="sticky top-0 bg-cream/95 backdrop-blur-sm flex items-center justify-between px-6 pt-5 pb-3 z-10">
+          <span className="font-display text-lg font-semibold text-coffee-dark">
+            {step === 'form' ? 'Únete a Soulbrew' : '¡Ya eres de la casa!'}
+          </span>
+          <button
+            onClick={onClose}
+            aria-label="Cerrar"
+            className="min-h-[44px] min-w-[44px] -mr-2 flex items-center justify-center text-coffee-light hover:text-coffee-dark rounded-xl focus:outline-none focus:ring-2 focus:ring-olive"
+          >
+            <X size={22} />
+          </button>
+        </div>
+
+        {step === 'form' && (
+          <form onSubmit={crearTarjeta} className="px-6 pb-7">
+            <p className="text-coffee-light text-sm leading-relaxed mb-6">
+              Crea tu tarjeta de fidelización en 10 segundos. Acumula{' '}
+              <strong className="text-coffee-medium font-semibold">1 punto por cada $1</strong> y
+              canjea <strong className="text-coffee-medium font-semibold">100 puntos por $10</strong>{' '}
+              de descuento.
+            </p>
+
+            <label className="block mb-4">
+              <span className="text-xs font-semibold uppercase tracking-wider text-coffee-light">Tu nombre</span>
+              <input
+                ref={nombreRef}
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+                type="text"
+                autoComplete="given-name"
+                placeholder="Ana López"
+                className="mt-1.5 w-full min-h-[52px] px-4 rounded-2xl bg-paper border border-line text-coffee-dark placeholder:text-coffee-light/50 focus:outline-none focus:ring-2 focus:ring-olive focus:border-olive transition"
+              />
+            </label>
+
+            <label className="block mb-2">
+              <span className="text-xs font-semibold uppercase tracking-wider text-coffee-light">Teléfono</span>
+              <input
+                value={telefono}
+                onChange={(e) => setTelefono(soloDigitos(e.target.value))}
+                type="tel"
+                inputMode="numeric"
+                autoComplete="tel"
+                placeholder="10 dígitos"
+                className="mt-1.5 w-full min-h-[52px] px-4 rounded-2xl bg-paper border border-line text-coffee-dark placeholder:text-coffee-light/50 tracking-wide tabular-nums focus:outline-none focus:ring-2 focus:ring-olive focus:border-olive transition"
+              />
+            </label>
+            <p className="text-xs text-coffee-light/70 mb-5 h-4">
+              {telefono.length > 0 && !telValida ? `${telefono.length}/10 dígitos` : 'Lo usas para identificarte en caja.'}
+            </p>
+
+            {error && (
+              <p className="text-sm text-red-700 bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-4">
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={!formValido || loading}
+              className="w-full min-h-[54px] rounded-2xl bg-olive text-cream font-semibold flex items-center justify-center gap-2 disabled:opacity-40 hover:bg-[#3E4A30] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-cream focus:ring-olive"
+            >
+              {loading ? (
+                <span className="animate-spin rounded-full h-5 w-5 border-2 border-cream border-t-transparent" />
+              ) : (
+                <>Crear mi tarjeta <ArrowRight size={18} /></>
+              )}
+            </button>
+          </form>
+        )}
+
+        {step === 'done' && cliente && (
+          <div className="px-6 pb-7">
+            <p className="text-coffee-light text-sm mb-5">
+              {yaExistia
+                ? `Ya tenías tu tarjeta, ${cliente.nombre.split(' ')[0]}. Aquí está — guárdala en tu teléfono.`
+                : `Listo, ${cliente.nombre.split(' ')[0]}. Tu tarjeta ya está activa.`}
+            </p>
+
+            {/* Tarjeta recién nacida — mismo lenguaje visual que /fidelidad */}
+            <div className="animate-card-in rounded-3xl bg-coffee-dark p-6 shadow-xl mb-5">
+              <div className="flex items-center justify-between mb-6">
+                <img src="/logo-dark.png" alt="Soulbrew" className="h-7 w-auto" />
+                <span className="flex items-center gap-1 text-salvia/80 text-[11px] uppercase tracking-widest">
+                  <Coffee size={12} /> Fidelidad
+                </span>
+              </div>
+              <p className="text-salvia/70 text-xs mb-1">Puntos disponibles</p>
+              <p className="font-display text-6xl font-semibold text-salvia leading-none tabular-nums mb-5">
+                {cliente.puntos_acumulados ?? 0}
+              </p>
+              <div className="flex items-end justify-between border-t border-white/10 pt-4">
+                <div>
+                  <p className="text-cream font-semibold leading-tight">{cliente.nombre}</p>
+                  <p className="text-salvia/60 text-sm tabular-nums">{cliente.telefono}</p>
+                </div>
+                <span className="text-salvia/60 text-[11px] text-right leading-tight">100 pts<br />= $10</span>
+              </div>
+            </div>
+
+            <button
+              onClick={agregarAGoogleWallet}
+              disabled={walletLoading}
+              className="w-full min-h-[54px] rounded-2xl bg-coffee-dark text-cream font-semibold flex items-center justify-center gap-2 disabled:opacity-60 hover:bg-coffee-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-cream focus:ring-olive"
+            >
+              {walletLoading ? (
+                <span className="animate-spin rounded-full h-5 w-5 border-2 border-cream border-t-transparent" />
+              ) : (
+                <Wallet size={18} />
+              )}
+              {walletLoading ? 'Generando…' : 'Agregar a Google Wallet'}
+            </button>
+            {walletError && <p className="text-center text-red-600 text-xs mt-2">{walletError}</p>}
+
+            <a
+              href={`/fidelidad/${cliente.telefono}`}
+              className="mt-3 w-full min-h-[48px] rounded-2xl flex items-center justify-center gap-1.5 text-olive font-semibold text-sm hover:bg-paper transition-colors"
+            >
+              <Check size={16} /> Ver mi tarjeta completa
+            </a>
+
+            <p className="text-center text-coffee-light/70 text-xs mt-3">
+              Apple Wallet llegará pronto.
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
