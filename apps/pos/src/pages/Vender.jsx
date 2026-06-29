@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import {
   Minus, Plus, Trash2, ShoppingCart, AlertTriangle,
   X, Phone, User, Star, CheckCircle,
-  Banknote, CreditCard, ArrowLeftRight,
+  Banknote, ArrowLeftRight,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
@@ -582,11 +582,10 @@ export default function Vender() {
             {/* Método de pago */}
             <div>
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Método de pago</p>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 {[
                   { value: 'efectivo', label: 'Efectivo', icon: Banknote },
-                  { value: 'tarjeta', label: 'Tarjeta', icon: CreditCard },
-                  { value: 'transferencia', label: 'Transf.', icon: ArrowLeftRight },
+                  { value: 'transferencia', label: 'Transferencia', icon: ArrowLeftRight },
                 ].map(({ value, label, icon: Icon }) => (
                   <button
                     key={value}

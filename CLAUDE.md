@@ -112,7 +112,7 @@ Inferido del código. Verifica con el MCP de Supabase antes de cambios de schema
   - Al registrar restock se inserta la fila **y** se actualiza `insumos.stock_actual` (en el cliente, no atómico)
 - **productos**: `id, nombre, descripcion, precio, categoria ('Bebidas'|'Alimentos'|'Postres'), imagen_url, activo`
 - **recetas**: `id, producto_id, insumo_id, cantidad` — relación producto↔insumo (clave única `producto_id,insumo_id`, se hace upsert)
-- **ventas**: `id, total, notas, created_by, cliente_id (nullable), created_at, metodo_pago ('efectivo'|'tarjeta'|'transferencia', default 'efectivo')`
+- **ventas**: `id, total, notas, created_by, cliente_id (nullable), created_at, metodo_pago (default 'efectivo'; la app usa solo 'efectivo'|'transferencia'. El CHECK de la BD aún permite 'tarjeta' por datos legados, pero el POS y los reportes ya no lo ofrecen)`
 - **venta_items**: `id, venta_id, producto_id, cantidad, precio_unitario, subtotal (nullable, no se setea en el insert del POS)`
 - **cortes**: `id, fecha (date), inicio, fin, fondo_inicial, total_ventas, num_ventas, total_efectivo, total_tarjeta, total_transferencia, descuentos, efectivo_esperado, efectivo_contado, diferencia, notas, created_by, created_at`
   - Snapshot histórico de cada cierre de caja. Un corte cubre el periodo **desde el `fin` del último corte del día (o el inicio del día) hasta ahora**; permite varios cortes por día (turnos). `efectivo_esperado = fondo_inicial + total_efectivo`; `diferencia = efectivo_contado − efectivo_esperado`.

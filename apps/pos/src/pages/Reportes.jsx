@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import {
   Calendar, DollarSign, Receipt, ShoppingBag, TrendingUp,
-  Banknote, CreditCard, ArrowLeftRight, Wallet, Save, AlertTriangle,
+  Banknote, ArrowLeftRight, Wallet, Save, AlertTriangle,
   CheckCircle, Lock,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
@@ -14,7 +14,6 @@ const MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
 
 const METODOS = {
   efectivo: { label: 'Efectivo', icon: Banknote, color: '#16a34a' },
-  tarjeta: { label: 'Tarjeta', icon: CreditCard, color: '#2563eb' },
   transferencia: { label: 'Transferencia', icon: ArrowLeftRight, color: '#9333ea' },
 }
 
@@ -48,8 +47,11 @@ const mesStr = () => {
 
 // Suma ventas por método de pago
 function desglosePorMetodo(ventas) {
-  const acc = { efectivo: 0, tarjeta: 0, transferencia: 0 }
-  for (const v of ventas) acc[v.metodo_pago || 'efectivo'] += num(v.total)
+  const acc = { efectivo: 0, transferencia: 0 }
+  for (const v of ventas) {
+    if (v.metodo_pago === 'transferencia') acc.transferencia += num(v.total)
+    else acc.efectivo += num(v.total)
+  }
   return acc
 }
 
@@ -168,7 +170,6 @@ function CorteCajaPanel({ fecha, periodStart, ventasPeriodo, descuentosPeriodo, 
       total_ventas: totalVentas,
       num_ventas: ventasPeriodo.length,
       total_efectivo: desglose.efectivo,
-      total_tarjeta: desglose.tarjeta,
       total_transferencia: desglose.transferencia,
       descuentos: descuentosPeriodo,
       efectivo_esperado: esperado,
@@ -202,7 +203,6 @@ function CorteCajaPanel({ fecha, periodStart, ventasPeriodo, descuentosPeriodo, 
           <div className="bg-gray-50 rounded-xl p-3 mb-4 space-y-1.5 text-sm">
             <div className="flex justify-between"><span className="text-gray-500">Ventas del periodo</span><span className="font-semibold text-[#42241A]">{money(totalVentas)}</span></div>
             <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-1"><Banknote size={13} className="text-green-600" /> En efectivo</span><span className="font-semibold text-[#42241A]">{money(desglose.efectivo)}</span></div>
-            <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-1"><CreditCard size={13} className="text-blue-600" /> Tarjeta</span><span className="text-gray-500">{money(desglose.tarjeta)}</span></div>
             <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-1"><ArrowLeftRight size={13} className="text-purple-600" /> Transferencia</span><span className="text-gray-500">{money(desglose.transferencia)}</span></div>
           </div>
 
@@ -424,7 +424,7 @@ function DiaTab() {
                 ) : (
                   <div className="divide-y divide-gray-50 max-h-[420px] overflow-y-auto -mx-1 px-1">
                     {ventas.map(v => {
-                      const M = METODOS[v.metodo_pago || 'efectivo']
+                      const M = METODOS[v.metodo_pago] || METODOS.efectivo
                       const Icon = M.icon
                       return (
                         <div key={v.id} className="flex items-center justify-between py-2.5">
