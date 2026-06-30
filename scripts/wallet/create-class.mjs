@@ -6,22 +6,55 @@ import { loadSA, getAccessToken, WALLET_API } from './_google.mjs'
 const ISSUER_ID = process.env.ISSUER_ID
 const CLASS_SUFFIX = process.env.CLASS_SUFFIX || 'soulbrew_fidelidad'
 const CLASS_ID = `${ISSUER_ID}.${CLASS_SUFFIX}`
-const LOGO_URL = process.env.LOGO_URL || 'https://placehold.co/300x300/2C1810/D4A853/png?text=Soulbrew'
+// Logo cuadrado de marca (wordmark sobre espresso), servido desde el dominio del cliente.
+const LOGO_URL = process.env.LOGO_URL || 'https://soulbrew-cliente.vercel.app/wallet-logo.png'
+const MENU_URL = process.env.MENU_URL || 'https://soulbrew-cliente.vercel.app/'
+const INSTAGRAM_URL = process.env.INSTAGRAM_URL || 'https://instagram.com/soulbrewmxl'
 
 if (!ISSUER_ID) throw new Error('Falta ISSUER_ID')
+
+const es = (value) => ({ defaultValue: { language: 'es-MX', value } })
 
 const loyaltyClass = {
   id: CLASS_ID,
   issuerName: 'Soulbrew',
   programName: 'Soulbrew Fidelidad',
+  localizedProgramName: es('Soulbrew Fidelidad'),
   programLogo: {
     sourceUri: { uri: LOGO_URL },
-    contentDescription: { defaultValue: { language: 'es-MX', value: 'Logo Soulbrew' } },
+    contentDescription: es('Logo Soulbrew'),
   },
   reviewStatus: 'UNDER_REVIEW',
-  hexBackgroundColor: '#2C1810',
+  // Paleta de marca (rebrand): café espresso del logo.
+  hexBackgroundColor: '#42241A',
   countryCode: 'MX',
-  localizedProgramName: { defaultValue: { language: 'es-MX', value: 'Soulbrew Fidelidad' } },
+
+  // Etiquetas de los campos por cliente (LoyaltyObject).
+  accountNameLabel: 'Cliente',
+  accountIdLabel: 'Teléfono',
+  rewardsTierLabel: 'Nivel',
+
+  // Detalle del programa (visible al expandir la tarjeta).
+  textModulesData: [
+    {
+      id: 'como_funciona',
+      header: 'Cómo funciona',
+      body: 'Gana 1 punto por cada $1 que gastes. Junta 100 puntos y canjéalos por $10 de descuento en tu próxima visita. Presenta tu tarjeta en caja.',
+    },
+    {
+      id: 'niveles',
+      header: 'Niveles',
+      body: 'Inicio · Recompensa a partir de 100 pts · VIP a partir de 300 pts.',
+    },
+  ],
+
+  // Links externos.
+  linksModuleData: {
+    uris: [
+      { id: 'menu', uri: MENU_URL, description: 'Ver el menú' },
+      { id: 'instagram', uri: INSTAGRAM_URL, description: 'Síguenos en Instagram' },
+    ],
+  },
 }
 
 const sa = loadSA()

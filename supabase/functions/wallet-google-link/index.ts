@@ -7,6 +7,10 @@ const cors = {
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...cors, 'Content-Type': 'application/json' } })
 
+// Nivel del cliente para la tarjeta (mismos umbrales que @soulbrew/core: 100 / 300).
+const nivel = (puntos: number) =>
+  puntos >= 300 ? 'VIP' : puntos >= 100 ? 'Recompensa' : 'Inicio'
+
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
   try {
@@ -36,6 +40,7 @@ Deno.serve(async (req: Request) => {
       accountName: cliente.nombre, accountId: cliente.telefono,
       loyaltyPoints: { label: 'Puntos', balance: { int: cliente.puntos_acumulados ?? 0 } },
       secondaryLoyaltyPoints: { label: 'Visitas', balance: { int: cliente.visitas ?? 0 } },
+      rewardsTier: nivel(cliente.puntos_acumulados ?? 0),
       barcode: { type: 'QR_CODE', value: cliente.telefono, alternateText: cliente.telefono },
     }
     const base = `${WALLET_API}/loyaltyObject`

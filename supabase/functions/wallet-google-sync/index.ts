@@ -2,6 +2,11 @@ import { getAccessToken, WALLET_API } from './google.ts'
 
 // Recibe el POST del trigger de Postgres (pg_net) cuando cambian los puntos de un cliente
 // y hace PATCH del LoyaltyObject en Google Wallet. Autenticado por header secreto.
+
+// Nivel del cliente (mismos umbrales que @soulbrew/core y wallet-google-link: 100 / 300).
+const nivel = (puntos: number) =>
+  puntos >= 300 ? 'VIP' : puntos >= 100 ? 'Recompensa' : 'Inicio'
+
 Deno.serve(async (req: Request) => {
   try {
     const secret = req.headers.get('x-webhook-secret')
@@ -24,6 +29,7 @@ Deno.serve(async (req: Request) => {
       body: JSON.stringify({
         loyaltyPoints: { label: 'Puntos', balance: { int: puntos } },
         secondaryLoyaltyPoints: { label: 'Visitas', balance: { int: visitas } },
+        rewardsTier: nivel(puntos),
       }),
     })
     return new Response(await res.text(), { status: res.status, headers: { 'Content-Type': 'application/json' } })

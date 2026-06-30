@@ -24,10 +24,20 @@
 - [x] **Validado end-to-end:** `wallet-google-link` devuelve saveUrl; cambiar puntos en BD
       sincroniza el LoyaltyObject en Google en segundos.
 
+### Diseño de la tarjeta (LoyaltyClass) — actualizado
+La clase se rediseñó con la marca (rebrand): fondo **espresso `#42241A`**, **logo real**
+(`wallet-logo.png`: wordmark sobre espresso, 660×660, servido desde
+`https://soulbrew-cliente.vercel.app/wallet-logo.png`), etiquetas *Cliente* / *Teléfono* /
+*Nivel*, módulos de texto **"Cómo funciona"** y **"Niveles"**, y links a **menú** e
+**Instagram** (`@soulbrewmxl`). El objeto (`wallet-google-link`) incluye `rewardsTier`
+(Inicio / Recompensa 100+ / VIP 300+), y `wallet-google-sync` lo recalcula al cambiar los
+puntos. Todo en `scripts/wallet/create-class.mjs` (env opcionales: `LOGO_URL`, `MENU_URL`,
+`INSTAGRAM_URL`). Re-aplicar con:
+`SA_KEYFILE=... ISSUER_ID=3388000000023139240 node scripts/wallet/create-class.mjs`
+
 ### Pendientes menores (no bloqueantes)
-- Reemplazar el logo placeholder (`placehold.co`) por el logo real de Soulbrew (`LOGO_URL` en `create-class.mjs`).
 - Usar el botón/asset oficial "Add to Google Wallet" (branding de Google) en vez del botón estilizado.
-- Guardar el código fuente de las Edge Functions en `supabase/functions/` para versionarlo (hoy solo están desplegadas).
+- (Opcional) Hero/banner con foto real de la cafetería (hoy la tarjeta va sin hero, a propósito).
 
 ### Secrets a cargar (Dashboard → Project Settings → Edge Functions → Secrets)
 | Secret | Valor |
