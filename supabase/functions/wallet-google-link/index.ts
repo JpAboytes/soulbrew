@@ -40,7 +40,8 @@ Deno.serve(async (req: Request) => {
       accountName: cliente.nombre, accountId: cliente.telefono,
       loyaltyPoints: { label: 'Puntos', balance: { int: cliente.puntos_acumulados ?? 0 } },
       secondaryLoyaltyPoints: { label: 'Visitas', balance: { int: cliente.visitas ?? 0 } },
-      rewardsTier: nivel(cliente.puntos_acumulados ?? 0),
+      // El nivel es por cliente: va como módulo de texto del objeto (rewardsTier es de la clase).
+      textModulesData: [{ id: 'nivel', header: 'Nivel', body: nivel(cliente.puntos_acumulados ?? 0) }],
       barcode: { type: 'QR_CODE', value: cliente.telefono, alternateText: cliente.telefono },
     }
     const base = `${WALLET_API}/loyaltyObject`

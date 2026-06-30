@@ -32,7 +32,6 @@ const loyaltyClass = {
   // Etiquetas de los campos por cliente (LoyaltyObject).
   accountNameLabel: 'Cliente',
   accountIdLabel: 'Teléfono',
-  rewardsTierLabel: 'Nivel',
 
   // Detalle del programa (visible al expandir la tarjeta).
   textModulesData: [

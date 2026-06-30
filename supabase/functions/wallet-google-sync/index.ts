@@ -29,7 +29,8 @@ Deno.serve(async (req: Request) => {
       body: JSON.stringify({
         loyaltyPoints: { label: 'Puntos', balance: { int: puntos } },
         secondaryLoyaltyPoints: { label: 'Visitas', balance: { int: visitas } },
-        rewardsTier: nivel(puntos),
+        // Nivel por cliente como módulo de texto del objeto (rewardsTier es de la clase).
+        textModulesData: [{ id: 'nivel', header: 'Nivel', body: nivel(puntos) }],
       }),
     })
     return new Response(await res.text(), { status: res.status, headers: { 'Content-Type': 'application/json' } })
