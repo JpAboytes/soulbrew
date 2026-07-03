@@ -1,6 +1,10 @@
 /* Service Worker de Soulbrew — recibe Web Push y abre la app al tocar la notificación.
    Se sirve desde la raíz (/sw.js) para poder controlar todo el scope del sitio. */
 
+// Activa la versión nueva de inmediato y toma control de las pestañas abiertas.
+self.addEventListener('install', () => self.skipWaiting())
+self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()))
+
 self.addEventListener('push', (event) => {
   let data = {}
   try {
