@@ -36,8 +36,18 @@ puntos. Todo en `scripts/wallet/create-class.mjs` (env opcionales: `LOGO_URL`, `
 `SA_KEYFILE=... ISSUER_ID=3388000000023139240 node scripts/wallet/create-class.mjs`
 
 ### Pendientes menores (no bloqueantes)
+- **Quitar el banner "[SOLO PARA PRUEBAS]" / "[TEST ONLY]"**: aparece porque el issuer
+  está en **modo demo**. Se resuelve pidiendo **acceso de publicación** en Google Pay &
+  Wallet Console → *Business profile* → *Request publishing access* (completar el perfil de
+  negocio). Una vez aprobado, los pases existentes pierden el banner. Es un paso **manual**,
+  no de código.
 - Usar el botón/asset oficial "Add to Google Wallet" (branding de Google) en vez del botón estilizado.
-- (Opcional) Hero/banner con foto real de la cafetería (hoy la tarjeta va sin hero, a propósito).
+- (Opcional) Hero/banner con foto real de la cafetería: tubería lista
+  (`scripts/wallet/make-hero.py` + `USE_HERO=1` en `create-class.mjs`); falta la foto.
+
+> **Logo:** se usa `wallet-logo-v2.png` (wordmark al 8% de margen, llena mejor el círculo).
+> El logo se genera con `scripts/wallet/make-logo.py`. Google cachea imágenes por URL, así
+> que al cambiar el logo hay que **versionar el nombre** (v2, v3, …), no sobrescribir.
 
 ### Secrets a cargar (Dashboard → Project Settings → Edge Functions → Secrets)
 | Secret | Valor |
