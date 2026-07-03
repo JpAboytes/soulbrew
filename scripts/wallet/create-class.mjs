@@ -6,10 +6,15 @@ import { loadSA, getAccessToken, WALLET_API } from './_google.mjs'
 const ISSUER_ID = process.env.ISSUER_ID
 const CLASS_SUFFIX = process.env.CLASS_SUFFIX || 'soulbrew_fidelidad'
 const CLASS_ID = `${ISSUER_ID}.${CLASS_SUFFIX}`
-// Logo cuadrado de marca (wordmark sobre espresso), servido desde el dominio del cliente.
-const LOGO_URL = process.env.LOGO_URL || 'https://soulbrew-cliente.vercel.app/wallet-logo.png'
+// Logo circular de marca (wordmark sobre espresso), servido desde el dominio del cliente.
+// Nombre versionado para cache-bust: Google cachea las imágenes por URL.
+const LOGO_URL = process.env.LOGO_URL || 'https://soulbrew-cliente.vercel.app/wallet-logo-v2.png'
 const MENU_URL = process.env.MENU_URL || 'https://soulbrew-cliente.vercel.app/'
 const INSTAGRAM_URL = process.env.INSTAGRAM_URL || 'https://instagram.com/soulbrewmxl'
+// Banner opcional (foto de la cafetería). Solo se incluye si HERO_URL está definido;
+// si se omite, la tarjeta va sin hero. Genera el PNG con scripts/wallet/make-hero.py.
+const HERO_URL = process.env.HERO_URL || 'https://soulbrew-cliente.vercel.app/wallet-hero.png'
+const USE_HERO = process.env.USE_HERO === '1'
 
 if (!ISSUER_ID) throw new Error('Falta ISSUER_ID')
 
@@ -54,6 +59,14 @@ const loyaltyClass = {
       { id: 'instagram', uri: INSTAGRAM_URL, description: 'Síguenos en Instagram' },
     ],
   },
+
+  // Banner (foto de la cafetería). Opt-in con USE_HERO=1.
+  ...(USE_HERO && {
+    heroImage: {
+      sourceUri: { uri: HERO_URL },
+      contentDescription: es('Soulbrew'),
+    },
+  }),
 }
 
 const sa = loadSA()
