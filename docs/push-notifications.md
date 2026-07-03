@@ -78,10 +78,17 @@ Redeploy del cliente tras agregarla. En local ya está en `apps/cliente/.env.loc
    Broadcast a todos. Para un solo cliente: agrega `"telefono":"6682217601"`.
    Respuesta: `{ sent, failed, cleaned }`.
 
+## Panel en el POS (Fase 3 — hecho)
+
+`apps/pos` → ruta **`/notificaciones`** (`pages/Notificaciones.jsx`): compositor con
+destinatarios (**Todos** o **Un cliente** por teléfono), título, mensaje, enlace y vista
+previa. Muestra el conteo de suscriptores (lee `push_subscriptions`, policy `authenticated`).
+Envía con `supabase.functions.invoke('push-send', …)`, que adjunta el JWT del cajero — por eso
+`push-send` acepta **auth dual** (admin secret **o** usuario autenticado) y el secreto nunca
+vive en el front.
+
 ## Fuera de alcance (fases futuras)
 
-- **Fase 2** — segmentación fina por cliente (ya está el `cliente_id` en la tabla).
-- **Fase 3** — panel en el POS para redactar/enviar (llamará a `push-send` vía una función
-  autenticada por JWT, no con el secreto en el front).
-- **Fase 4** — envíos automáticos por evento (p. ej. al cruzar 100 pts).
+- **Fase 4** — envíos automáticos por evento (p. ej. al cruzar 100 pts, o al registrarse).
+- Historial de envíos (tabla + lista en el POS).
 - iPhone vía notificaciones del **pase de Wallet** como canal alterno.

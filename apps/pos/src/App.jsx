@@ -8,6 +8,7 @@ import Productos from './pages/Productos'
 import Vender from './pages/Vender'
 import Clientes from './pages/Clientes'
 import Reportes from './pages/Reportes'
+import Notificaciones from './pages/Notificaciones'
 import Asistente from './pages/Asistente'
 
 export default function App() {
@@ -26,6 +27,7 @@ export default function App() {
               <Route path="/productos" element={<Productos />} />
               <Route path="/clientes" element={<Clientes />} />
               <Route path="/reportes" element={<Reportes />} />
+              <Route path="/notificaciones" element={<Notificaciones />} />
               <Route path="/asistente" element={<Asistente />} />
               <Route path="/" element={<Navigate to="/vender" replace />} />
             </Route>

@@ -1,31 +1,55 @@
 // push-send — envía una notificación Web Push (broadcast o a un cliente por teléfono).
-// Protegida por header secreto `x-admin-secret` (server-to-server / pruebas). En una fase
-// futura, el panel del POS la llamará a través de una función autenticada por JWT.
+// Firma con VAPID (web-push, npm). verify_jwt = false: la autorización se hace en el código.
 //
-// verify_jwt = false: usa su propio secreto. Firma con VAPID (web-push, npm).
+// Dos formas de autorizar:
+//  1. Header `x-admin-secret` (server-to-server / pruebas con curl).
+//  2. JWT de un usuario POS autenticado (el panel llama con la sesión del cajero).
+//     Se valida contra /auth/v1/user; la anon key NO es un usuario, así que se rechaza.
 import webpush from 'npm:web-push@3.6.7'
 
 const json = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-admin-secret' },
+  })
+
+async function usuarioAutorizado(req: Request, supabaseUrl: string, anonKey: string): Promise<boolean> {
+  const authz = req.headers.get('Authorization') ?? ''
+  const token = authz.replace(/^Bearer\s+/i, '')
+  if (!token) return false
+  // /auth/v1/user resuelve solo con un access token de usuario real (no con la anon key).
+  const r = await fetch(`${supabaseUrl}/auth/v1/user`, {
+    headers: { apikey: anonKey, Authorization: `Bearer ${token}` },
+  })
+  if (!r.ok) return false
+  const u = await r.json().catch(() => null)
+  return Boolean(u?.id && u?.role === 'authenticated')
+}
 
 Deno.serve(async (req: Request) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', {
+      headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-admin-secret' },
+    })
+  }
   try {
-    if (req.headers.get('x-admin-secret') !== Deno.env.get('PUSH_ADMIN_SECRET')) {
-      return new Response('unauthorized', { status: 401 })
-    }
-
-    const { telefono, title, body: msgBody, url } = await req.json().catch(() => ({}))
-    if (!title && !msgBody) return json({ error: 'title o body requerido' }, 400)
-
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
     const SERVICE_ROLE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const ANON = Deno.env.get('SUPABASE_ANON_KEY')!
+
+    const adminOk = req.headers.get('x-admin-secret') === Deno.env.get('PUSH_ADMIN_SECRET')
+    const userOk = adminOk ? false : await usuarioAutorizado(req, SUPABASE_URL, ANON)
+    if (!adminOk && !userOk) return new Response('unauthorized', { status: 401 })
+
+    const { telefono, title, body: msgBody, url, debug } = await req.json().catch(() => ({}))
+    if (!title && !msgBody) return json({ error: 'title o body requerido' }, 400)
+
     const restHeaders = { apikey: SERVICE_ROLE, Authorization: `Bearer ${SERVICE_ROLE}` }
 
-    webpush.setVapidDetails(
-      Deno.env.get('VAPID_SUBJECT') ?? 'mailto:soulbrew@example.com',
-      Deno.env.get('VAPID_PUBLIC_KEY')!,
-      Deno.env.get('VAPID_PRIVATE_KEY')!,
-    )
+    const pub = Deno.env.get('VAPID_PUBLIC_KEY')
+    const priv = Deno.env.get('VAPID_PRIVATE_KEY')
+    if (!pub || !priv) return json({ error: 'faltan secrets VAPID' }, 500)
+    webpush.setVapidDetails(Deno.env.get('VAPID_SUBJECT') ?? 'mailto:soulbrew@example.com', pub, priv)
 
     // Destinatarios: un cliente (por teléfono) o todos.
     let query = `${SUPABASE_URL}/rest/v1/push_subscriptions?select=id,endpoint,p256dh,auth`
@@ -45,21 +69,24 @@ Deno.serve(async (req: Request) => {
 
     let sent = 0, failed = 0
     const expirados: string[] = []
+    const diag: Array<Record<string, unknown>> = []
     for (const s of subs) {
       try {
-        await webpush.sendNotification(
+        const r = await webpush.sendNotification(
           { endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } },
           payload,
+          { TTL: 3600, urgency: 'high' },
         )
         sent++
+        if (debug) diag.push({ id: s.id, statusCode: (r as { statusCode?: number })?.statusCode })
       } catch (err) {
         failed++
-        const code = (err as { statusCode?: number })?.statusCode
-        if (code === 404 || code === 410) expirados.push(s.id) // suscripción muerta
+        const e = err as { statusCode?: number; body?: string; message?: string }
+        if (debug) diag.push({ id: s.id, error: e?.statusCode ?? e?.message, body: e?.body })
+        if (e?.statusCode === 404 || e?.statusCode === 410) expirados.push(s.id)
       }
     }
 
-    // Limpia las suscripciones expiradas.
     if (expirados.length > 0) {
       await fetch(`${SUPABASE_URL}/rest/v1/push_subscriptions?id=in.(${expirados.join(',')})`, {
         method: 'DELETE',
@@ -67,7 +94,7 @@ Deno.serve(async (req: Request) => {
       })
     }
 
-    return json({ sent, failed, cleaned: expirados.length })
+    return json({ sent, failed, cleaned: expirados.length, ...(debug ? { diag } : {}) })
   } catch (e) {
     return json({ error: String((e as Error)?.message ?? e) }, 500)
   }

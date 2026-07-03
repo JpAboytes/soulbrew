@@ -71,6 +71,7 @@ apps/pos/src/              # POS/admin (protegido por auth)
     Productos.jsx          #   CRUD de productos, recetas, imagen
     Clientes.jsx           #   clientes, detalle, historial, ajuste de puntos, QR
     Reportes.jsx           #   corte de caja del día + reporteo diario y mensual
+    Notificaciones.jsx     #   panel para enviar Web Push (a todos o a un cliente)
     Asistente.jsx          #   chat con el agente de IA (n8n)
 
 apps/cliente/src/          # App pública del cliente (sin auth, móvil-first)
@@ -101,6 +102,7 @@ apps/cliente/src/          # App pública del cliente (sin auth, móvil-first)
 | `/productos` | protegida | Productos + recetas |
 | `/clientes` | protegida | Clientes + puntos |
 | `/reportes` | protegida | Corte del día (cierre de caja) y reportes diario/mensual |
+| `/notificaciones` | protegida | Enviar Web Push a clientes (broadcast o por teléfono) |
 | `/asistente` | protegida | Chat con agente de IA (analítica vía n8n) |
 
 Las rutas protegidas se envuelven en `<ProtectedRoute>` → `<Layout>` (sidebar). `/` redirige a `/vender`.
@@ -129,7 +131,7 @@ Inferido del código. Verifica con el MCP de Supabase antes de cambios de schema
   - Snapshot histórico de cada cierre de caja. Un corte cubre el periodo **desde el `fin` del último corte del día (o el inicio del día) hasta ahora**; permite varios cortes por día (turnos). `efectivo_esperado = fondo_inicial + total_efectivo`; `diferencia = efectivo_contado − efectivo_esperado`.
 - **clientes**: `id, nombre, telefono (único, 10 dígitos), email, puntos_acumulados, visitas, created_at`
 - **puntos_historial**: `id, cliente_id, venta_id (nullable), puntos (+/-), concepto ('compra'|'canje'|'bono'|'ajuste'|...), created_at`
-- **push_subscriptions**: `id, cliente_id (nullable, FK→clientes), endpoint (único), p256dh, auth, user_agent, created_at, updated_at` — suscripciones de Web Push. RLS **on sin policies anon**: solo el service_role (Edge Functions `push-*`) accede. Ver `docs/push-notifications.md`.
+- **push_subscriptions**: `id, cliente_id (nullable, FK→clientes), endpoint (único), p256dh, auth, user_agent, created_at, updated_at` — suscripciones de Web Push. RLS: **sin acceso anon**; `authenticated` puede **SELECT** (para el conteo en el POS); el resto solo por service_role (Edge Functions `push-*`). Ver `docs/push-notifications.md`.
 
 ### Storage
 - Bucket público **`productos`** para imágenes de producto (subida desde `Productos.jsx` → `uploadProductoImage`).
@@ -142,7 +144,7 @@ Inferido del código. Verifica con el MCP de Supabase antes de cambios de schema
 - **`wallet-google-sync`** (sin `verify_jwt`, header secreto) — la llama el webhook de `clientes` para reflejar cambios de puntos en el wallet.
 - **`cliente-registro`** (`verify_jwt`) — alta pública a fidelidad desde `RegistroModal.jsx`: valida nombre + teléfono (10 díg.) con el **service_role**, evita duplicados (devuelve `{ cliente, yaExistia }`) e inserta en `clientes`. Existe porque la anon key **no** tiene `INSERT` en `clientes`.
 - **`push-subscribe`** (`verify_jwt`) — guarda la suscripción de Web Push (upsert por endpoint) y la liga al cliente por teléfono. La llama el front. Ver `docs/push-notifications.md`.
-- **`push-send`** (sin `verify_jwt`, header `x-admin-secret`) — envía Web Push con `web-push` + VAPID. Body `{ telefono?, title, body, url? }` (sin teléfono = broadcast). Secrets: `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, `PUSH_ADMIN_SECRET`.
+- **`push-send`** (sin `verify_jwt`) — envía Web Push con `web-push` + VAPID. Body `{ telefono?, title, body, url? }` (sin teléfono = broadcast). **Auth dual**: header `x-admin-secret` (curl/server) **o** JWT de un usuario POS autenticado (lo valida contra `/auth/v1/user`; la anon key se rechaza). La usa el panel `/notificaciones` del POS. Secrets: `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, `PUSH_ADMIN_SECRET`.
 
 ### Funciones de analítica (para el agente de IA)
 Funciones `SECURITY DEFINER` de solo lectura que devuelven `jsonb`, concedidas **solo a
