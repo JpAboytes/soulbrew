@@ -16,8 +16,9 @@ self.addEventListener('push', (event) => {
   const title = data.title || 'Soulbrew'
   const options = {
     body: data.body || '',
-    icon: data.icon || '/favicon.png',
-    badge: '/favicon.png',
+    icon: data.icon || '/notif-icon.png',   // logo de marca (grande, a color)
+    badge: '/notif-badge.png',               // silueta monocroma para la barra de estado
+    vibrate: [80, 40, 80],
     data: { url: data.url || '/' },
   }
   event.waitUntil(self.registration.showNotification(title, options))
