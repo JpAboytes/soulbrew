@@ -42,7 +42,7 @@ El repositorio Git está en `soulbrew/` (raíz del monorepo) y está limpio. Ram
 Cada app tiene su propio `.env.local` (no versionado), con prefijo `VITE_`. Ver `.env.example`.
 - **`apps/pos/.env.local`**: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_N8N_WEBHOOK_URL`,
   (opcional) `VITE_PUBLIC_URL`.
-- **`apps/cliente/.env.local`**: solo `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`.
+- **`apps/cliente/.env.local`**: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` y (Web Push) `VITE_VAPID_PUBLIC_KEY` (llave pública, no secreta).
 
 El cliente Supabase se crea con `createSupabaseClient(url, anonKey)` de **`@soulbrew/core`**; cada
 app lo invoca desde su `src/lib/supabase.js` con sus propias env. Hay un MCP de Supabase en
@@ -76,7 +76,9 @@ apps/pos/src/              # POS/admin (protegido por auth)
 apps/cliente/src/          # App pública del cliente (sin auth, móvil-first)
   main.jsx, App.jsx, index.css
   lib/supabase.js          #   usa el factory de @soulbrew/core
-  components/RegistroModal.jsx  # popup de alta a fidelidad → tarjeta + Google Wallet
+  lib/push.js              #   web push: registra SW, pide permiso, suscribe (Fase 1)
+  components/RegistroModal.jsx  # popup de alta a fidelidad → tarjeta + Google Wallet + opt-in de avisos
+  public/sw.js             #   service worker (recibe push, abre la app)
   pages/
     Menu.jsx               #   home: carta de la cafetería (productos activos) + CTA de fidelidad
     FidelidadPublica.jsx   #   tarjeta de fidelización + Google Wallet
@@ -127,6 +129,7 @@ Inferido del código. Verifica con el MCP de Supabase antes de cambios de schema
   - Snapshot histórico de cada cierre de caja. Un corte cubre el periodo **desde el `fin` del último corte del día (o el inicio del día) hasta ahora**; permite varios cortes por día (turnos). `efectivo_esperado = fondo_inicial + total_efectivo`; `diferencia = efectivo_contado − efectivo_esperado`.
 - **clientes**: `id, nombre, telefono (único, 10 dígitos), email, puntos_acumulados, visitas, created_at`
 - **puntos_historial**: `id, cliente_id, venta_id (nullable), puntos (+/-), concepto ('compra'|'canje'|'bono'|'ajuste'|...), created_at`
+- **push_subscriptions**: `id, cliente_id (nullable, FK→clientes), endpoint (único), p256dh, auth, user_agent, created_at, updated_at` — suscripciones de Web Push. RLS **on sin policies anon**: solo el service_role (Edge Functions `push-*`) accede. Ver `docs/push-notifications.md`.
 
 ### Storage
 - Bucket público **`productos`** para imágenes de producto (subida desde `Productos.jsx` → `uploadProductoImage`).
@@ -138,6 +141,8 @@ Inferido del código. Verifica con el MCP de Supabase antes de cambios de schema
 - **`wallet-google-link`** (`verify_jwt`) — genera/actualiza el LoyaltyObject y devuelve el `saveUrl` de Google Wallet para un teléfono existente. La consume `FidelidadPublica.jsx` y `RegistroModal.jsx`.
 - **`wallet-google-sync`** (sin `verify_jwt`, header secreto) — la llama el webhook de `clientes` para reflejar cambios de puntos en el wallet.
 - **`cliente-registro`** (`verify_jwt`) — alta pública a fidelidad desde `RegistroModal.jsx`: valida nombre + teléfono (10 díg.) con el **service_role**, evita duplicados (devuelve `{ cliente, yaExistia }`) e inserta en `clientes`. Existe porque la anon key **no** tiene `INSERT` en `clientes`.
+- **`push-subscribe`** (`verify_jwt`) — guarda la suscripción de Web Push (upsert por endpoint) y la liga al cliente por teléfono. La llama el front. Ver `docs/push-notifications.md`.
+- **`push-send`** (sin `verify_jwt`, header `x-admin-secret`) — envía Web Push con `web-push` + VAPID. Body `{ telefono?, title, body, url? }` (sin teléfono = broadcast). Secrets: `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, `PUSH_ADMIN_SECRET`.
 
 ### Funciones de analítica (para el agente de IA)
 Funciones `SECURITY DEFINER` de solo lectura que devuelven `jsonb`, concedidas **solo a

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
-import { X, Wallet, ArrowRight, Check, Coffee } from 'lucide-react'
+import { X, Wallet, ArrowRight, Check, Coffee, Bell, BellRing, Share } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { subscribeToPush, pushSupported, isIOS, isStandalone } from '../lib/push'
 
 // Popup de alta al programa de fidelización: datos sencillos (nombre + teléfono) →
 // se crea la tarjeta (Edge Function `cliente-registro`) → se muestra la tarjeta recién
@@ -22,6 +23,12 @@ export default function RegistroModal({ onClose }) {
 
   const [walletLoading, setWalletLoading] = useState(false)
   const [walletError, setWalletError] = useState(null)
+
+  // Avisos push (opt-in tras el registro).
+  const [pushState, setPushState] = useState('idle')   // 'idle' | 'loading' | 'done' | 'error'
+  const [pushError, setPushError] = useState(null)
+  // iPhone en Safari (no instalado) no puede recibir push todavía.
+  const iosSinInstalar = typeof navigator !== 'undefined' && isIOS() && !isStandalone()
 
   const nombreRef = useRef(null)
   const telValida = telefono.length === 10
@@ -54,6 +61,18 @@ export default function RegistroModal({ onClose }) {
       setError(err.message || 'No pudimos crear tu tarjeta. Revisa tus datos.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function activarAvisos() {
+    setPushError(null)
+    setPushState('loading')
+    try {
+      await subscribeToPush({ telefono: cliente.telefono })
+      setPushState('done')
+    } catch (err) {
+      setPushError(err.message || 'No se pudieron activar los avisos.')
+      setPushState('error')
     }
   }
 
@@ -198,6 +217,46 @@ export default function RegistroModal({ onClose }) {
               {walletLoading ? 'Generando…' : 'Agregar a Google Wallet'}
             </button>
             {walletError && <p className="text-center text-red-600 text-xs mt-2">{walletError}</p>}
+
+            {/* Opt-in de avisos push */}
+            <div className="mt-3 rounded-2xl border border-line bg-paper p-4">
+              {pushState === 'done' ? (
+                <p className="flex items-center justify-center gap-2 text-olive font-semibold text-sm py-1">
+                  <BellRing size={16} /> Avisos activados
+                </p>
+              ) : iosSinInstalar ? (
+                <div className="text-center">
+                  <p className="flex items-center justify-center gap-1.5 text-coffee-dark font-semibold text-sm">
+                    <Bell size={15} /> Recibe avisos y promos
+                  </p>
+                  <p className="text-coffee-light text-xs mt-1.5 leading-snug">
+                    En iPhone: toca <Share size={12} className="inline -mt-0.5" /> Compartir →
+                    <strong> Agregar a inicio</strong>, ábrela desde ahí y activa los avisos.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <button
+                    onClick={activarAvisos}
+                    disabled={pushState === 'loading' || !pushSupported()}
+                    className="w-full min-h-[48px] rounded-xl bg-transparent border border-olive text-olive font-semibold flex items-center justify-center gap-2 disabled:opacity-50 hover:bg-olive/5 transition-colors"
+                  >
+                    {pushState === 'loading' ? (
+                      <span className="animate-spin rounded-full h-4 w-4 border-2 border-olive border-t-transparent" />
+                    ) : (
+                      <Bell size={16} />
+                    )}
+                    Recibir avisos y promos
+                  </button>
+                  {!pushSupported() && (
+                    <p className="text-coffee-light/70 text-xs text-center mt-2">
+                      Tu navegador no soporta avisos.
+                    </p>
+                  )}
+                  {pushError && <p className="text-red-600 text-xs text-center mt-2">{pushError}</p>}
+                </>
+              )}
+            </div>
 
             <a
               href={`/fidelidad/${cliente.telefono}`}
