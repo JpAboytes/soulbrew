@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { X, Wallet, ArrowRight, Check, Coffee, Bell, BellRing, Share } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { subscribeToPush, pushSupported, isIOS, isStandalone } from '../lib/push'
+import { mensajeFnError } from '../lib/fnError'
 
 // Popup de alta al programa de fidelización: datos sencillos (nombre + teléfono) →
 // se crea la tarjeta (Edge Function `cliente-registro`) → se muestra la tarjeta recién
@@ -34,13 +35,22 @@ export default function RegistroModal({ onClose }) {
   const telValida = telefono.length === 10
   const formValido = nombre.trim().length >= 2 && telValida
 
-  // Foco inicial + cerrar con Escape.
+  // No cerrar mientras hay un request en vuelo (evita perder la tarjeta recién creada).
+  const ocupado = loading || walletLoading
+  const cerrar = () => { if (!ocupado) onClose() }
+
+  // Foco inicial + cerrar con Escape + bloquear scroll del fondo mientras el modal está abierto.
   useEffect(() => {
     nombreRef.current?.focus()
-    const onKey = (e) => e.key === 'Escape' && onClose()
+    const onKey = (e) => { if (e.key === 'Escape' && !ocupado) onClose() }
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prevOverflow
+    }
+  }, [onClose, ocupado])
 
   async function crearTarjeta(e) {
     e.preventDefault()
@@ -51,7 +61,7 @@ export default function RegistroModal({ onClose }) {
       const { data, error: fnError } = await supabase.functions.invoke('cliente-registro', {
         body: { nombre: nombre.trim(), telefono },
       })
-      if (fnError) throw fnError
+      if (fnError) throw new Error(await mensajeFnError(fnError, 'No pudimos crear tu tarjeta. Revisa tus datos.'))
       if (data?.error) throw new Error(data.error)
       if (!data?.cliente) throw new Error('No recibimos tu tarjeta. Intenta de nuevo.')
       setCliente(data.cliente)
@@ -83,7 +93,7 @@ export default function RegistroModal({ onClose }) {
       const { data, error: fnError } = await supabase.functions.invoke('wallet-google-link', {
         body: { telefono: cliente.telefono },
       })
-      if (fnError) throw fnError
+      if (fnError) throw new Error(await mensajeFnError(fnError, 'No se pudo generar la tarjeta'))
       if (!data?.saveUrl) throw new Error('No se recibió el enlace de Google Wallet')
       window.location.href = data.saveUrl
     } catch (err) {
@@ -95,7 +105,7 @@ export default function RegistroModal({ onClose }) {
   return (
     <div
       className="fixed inset-0 z-50 bg-coffee-dark/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-6"
-      onClick={onClose}
+      onClick={cerrar}
       role="dialog"
       aria-modal="true"
     >
@@ -109,9 +119,10 @@ export default function RegistroModal({ onClose }) {
             {step === 'form' ? 'Únete a Soulbrew' : '¡Ya eres de la casa!'}
           </span>
           <button
-            onClick={onClose}
+            onClick={cerrar}
+            disabled={ocupado}
             aria-label="Cerrar"
-            className="min-h-[44px] min-w-[44px] -mr-2 flex items-center justify-center text-coffee-light hover:text-coffee-dark rounded-xl focus:outline-none focus:ring-2 focus:ring-olive"
+            className="min-h-[44px] min-w-[44px] -mr-2 flex items-center justify-center text-coffee-light hover:text-coffee-dark rounded-xl focus:outline-none focus:ring-2 focus:ring-olive disabled:opacity-40"
           >
             <X size={22} />
           </button>
@@ -133,7 +144,7 @@ export default function RegistroModal({ onClose }) {
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
                 type="text"
-                autoComplete="given-name"
+                autoComplete="name"
                 placeholder="Ana López"
                 className="mt-1.5 w-full min-h-[52px] px-4 rounded-2xl bg-paper border border-line text-coffee-dark placeholder:text-coffee-light/50 focus:outline-none focus:ring-2 focus:ring-olive focus:border-olive transition"
               />

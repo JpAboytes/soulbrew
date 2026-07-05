@@ -2,6 +2,7 @@
 // La suscripción se guarda vía la Edge Function `push-subscribe` (service_role),
 // ligada al teléfono del cliente cuando está disponible.
 import { supabase } from './supabase'
+import { mensajeFnError } from './fnError'
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY
 
@@ -61,19 +62,40 @@ export async function subscribeToPush({ telefono } = {}) {
     throw new Error('No activaste el permiso de notificaciones.')
   }
 
-  const reg = (await navigator.serviceWorker.ready) || (await registerServiceWorker())
-
-  // Suscripción fresca: descarta cualquier suscripción previa (puede haber expirado,
-  // que es lo que causaba el 410). Así siempre guardamos un endpoint válido.
-  const previa = await reg.pushManager.getSubscription()
-  if (previa) {
-    try { await previa.unsubscribe() } catch { /* ignore */ }
+  // `serviceWorker.ready` nunca resuelve si el SW no llegó a activarse (registro fallido,
+  // storage bloqueado…). Resolvemos el registro nosotros y ponemos un tope de tiempo para
+  // no dejar el botón en spinner infinito.
+  let reg = await navigator.serviceWorker.getRegistration()
+  if (!reg) reg = await registerServiceWorker()
+  if (!reg) throw new Error('No se pudo preparar el navegador para los avisos.')
+  if (!reg.active) {
+    await Promise.race([
+      navigator.serviceWorker.ready,
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('El navegador tardó demasiado en activar los avisos.')), 8000)),
+    ])
   }
 
-  const sub = await reg.pushManager.subscribe({
-    userVisibleOnly: true,
-    applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
-  })
+  // Reusar la suscripción existente si el applicationServerKey no cambió. Solo
+  // desuscribimos si difiere: matar la previa antes de tener una nueva dejaría al
+  // usuario sin avisos si `subscribe()` falla.
+  const appKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+  const previa = await reg.pushManager.getSubscription()
+  let sub = previa
+  const mismaLlave =
+    previa &&
+    previa.options?.applicationServerKey &&
+    new Uint8Array(previa.options.applicationServerKey).every((b, i) => b === appKey[i])
+  if (previa && !mismaLlave) {
+    try { await previa.unsubscribe() } catch { /* ignore */ }
+    sub = null
+  }
+  if (!sub) {
+    sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: appKey,
+    })
+  }
 
   const { keys } = sub.toJSON()
   const { data, error } = await supabase.functions.invoke('push-subscribe', {
@@ -83,7 +105,7 @@ export async function subscribeToPush({ telefono } = {}) {
       userAgent: navigator.userAgent,
     },
   })
-  if (error) throw error
+  if (error) throw new Error(await mensajeFnError(error, 'No se pudieron activar los avisos.'))
   if (data?.error) throw new Error(data.error)
   return data
 }

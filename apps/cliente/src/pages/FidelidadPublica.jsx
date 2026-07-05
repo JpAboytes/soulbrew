@@ -9,12 +9,15 @@ const NIVEL_ICON = { vip: Trophy, recompensa: Gift, inicio: Star }
 
 export default function FidelidadPublica() {
   const { telefono } = useParams()
+  // El :telefono de la URL puede venir con espacios, guiones o prefijo (+52…); la BD guarda
+  // 10 dígitos. Normalizamos a los últimos 10 antes de consultar.
+  const tel = (telefono ?? '').replace(/\D/g, '').slice(-10)
   const [state, setState] = useState({ status: 'loading', cliente: null, historial: [], error: null })
   const [walletLoading, setWalletLoading] = useState(false)
   const [walletError, setWalletError] = useState(null)
 
   useEffect(() => {
-    if (!telefono) {
+    if (tel.length !== 10) {
       setState({ status: 'not_found', cliente: null, historial: [], error: null })
       return
     }
@@ -22,44 +25,24 @@ export default function FidelidadPublica() {
     let cancelled = false
 
     async function fetchData() {
-      // Aseguramos que la sesión esté resuelta para usar el rol correcto
-      await supabase.auth.getSession()
-
-      const { data: cliente, error: errCliente } = await supabase
-        .from('clientes')
-        .select('id, nombre, telefono, puntos_acumulados, visitas, created_at')
-        .eq('telefono', telefono)
-        .maybeSingle()
+      // RPC pública (SECURITY DEFINER): devuelve SOLO la fila de este teléfono (sin email)
+      // + sus últimas 5 visitas con puntos, en una llamada. Reemplaza la lectura directa de
+      // `clientes`/`puntos_historial`, que quedó cerrada a anon para no exponer toda la base.
+      const { data, error } = await supabase.rpc('fidelidad_por_telefono', { p_telefono: tel })
 
       if (cancelled) return
 
-      if (errCliente) {
-        setState({ status: 'error', cliente: null, historial: [], error: errCliente.message })
+      if (error) {
+        setState({ status: 'error', cliente: null, historial: [], error: error.message })
         return
       }
 
-      if (!cliente) {
+      if (!data?.cliente) {
         setState({ status: 'not_found', cliente: null, historial: [], error: null })
         return
       }
 
-      const { data: historial, error: errHistorial } = await supabase
-        .from('puntos_historial')
-        .select('puntos, concepto, created_at')
-        .eq('cliente_id', cliente.id)
-        .gt('puntos', 0)
-        .order('created_at', { ascending: false })
-        .limit(5)
-
-      if (cancelled) return
-
-      if (errHistorial) {
-        // El cliente existe pero el historial falló — mostramos el cliente igualmente
-        setState({ status: 'ok', cliente, historial: [], error: null })
-        return
-      }
-
-      setState({ status: 'ok', cliente, historial: historial ?? [], error: null })
+      setState({ status: 'ok', cliente: data.cliente, historial: data.historial ?? [], error: null })
     }
 
     fetchData().catch(err => {
@@ -69,7 +52,7 @@ export default function FidelidadPublica() {
     })
 
     return () => { cancelled = true }
-  }, [telefono])
+  }, [tel])
 
   // ── Loading ──────────────────────────────────────────────────────────────────
   if (state.status === 'loading') return (
@@ -105,8 +88,14 @@ export default function FidelidadPublica() {
         <p className="text-gray-500 mt-2 text-sm">
           No hay cuenta de fidelización con el número <strong>{telefono}</strong>.
         </p>
-        <p className="text-xs text-[#7C5A43] mt-4">
-          Visítanos y pide registrarte en caja.
+        <a
+          href="/"
+          className="mt-5 inline-flex items-center justify-center bg-[#4E5B3D] text-[#FAFAF7] font-bold px-6 py-3 rounded-xl w-full min-h-[48px]"
+        >
+          Crear mi tarjeta
+        </a>
+        <p className="text-xs text-[#7C5A43] mt-3">
+          O visítanos y pide registrarte en caja.
         </p>
       </div>
     </div>
@@ -125,7 +114,7 @@ export default function FidelidadPublica() {
     setWalletLoading(true)
     try {
       const { data, error } = await supabase.functions.invoke('wallet-google-link', {
-        body: { telefono },
+        body: { telefono: tel },
       })
       if (error) throw error
       if (!data?.saveUrl) throw new Error('No se recibió el enlace de Google Wallet')
