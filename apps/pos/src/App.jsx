@@ -9,7 +9,8 @@ import Vender from './pages/Vender'
 import Clientes from './pages/Clientes'
 import Reportes from './pages/Reportes'
 import Notificaciones from './pages/Notificaciones'
-import Asistente from './pages/Asistente'
+// Asistente deshabilitado temporalmente (se retoma después). Se conserva pages/Asistente.jsx.
+// import Asistente from './pages/Asistente'
 
 export default function App() {
   return (
@@ -28,7 +29,8 @@ export default function App() {
               <Route path="/clientes" element={<Clientes />} />
               <Route path="/reportes" element={<Reportes />} />
               <Route path="/notificaciones" element={<Notificaciones />} />
-              <Route path="/asistente" element={<Asistente />} />
+              {/* Asistente deshabilitado temporalmente:
+              <Route path="/asistente" element={<Asistente />} /> */}
               <Route path="/" element={<Navigate to="/vender" replace />} />
             </Route>
           </Route>

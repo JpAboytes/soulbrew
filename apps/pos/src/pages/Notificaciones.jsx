@@ -33,6 +33,13 @@ export default function Notificaciones() {
 
   async function enviar() {
     if (!puedeEnviar) return
+    if (audiencia === 'todos') {
+      const n = suscriptores ?? 0
+      const ok = window.confirm(
+        `Vas a enviar esta notificación a TODOS los suscriptores (${n} dispositivo${n !== 1 ? 's' : ''}). ¿Continuar?`,
+      )
+      if (!ok) return
+    }
     setEnviando(true)
     try {
       const body = {

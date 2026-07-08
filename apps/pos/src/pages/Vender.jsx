@@ -247,15 +247,25 @@ export default function Vender() {
   const total = carrito.reduce((s, i) => s + i.precio * i.cantidad, 0)
   const totalItems = carrito.reduce((s, i) => s + i.cantidad, 0)
   const sinReceta = carrito.filter(i => !productosConReceta.has(i.id))
+  // El canje se limita por el saldo del cliente Y por el total del carrito: canjear más
+  // de lo que vale la cuenta quemaría puntos sin dar descuento (100 pts = $10).
   const maxCanje = clienteSeleccionado
-    ? Math.floor(clienteSeleccionado.puntos_acumulados / 100) * 100
+    ? Math.min(
+        Math.floor(clienteSeleccionado.puntos_acumulados / 100) * 100,
+        Math.floor(total / 10) * 100,
+      )
     : 0
   const descuento = (puntosACanjear / 100) * 10
   const totalFinal = Math.max(0, total - descuento)
 
+  // Si el carrito cambia y el canje elegido supera el nuevo máximo, recórtalo.
+  useEffect(() => {
+    if (puntosACanjear > maxCanje) setPuntosACanjear(maxCanje)
+  }, [maxCanje, puntosACanjear])
+
   // ── Confirmar venta ────────────────────────────────────────────────────────
   async function confirmarVenta() {
-    if (carrito.length === 0) return
+    if (carrito.length === 0 || confirming) return
     setConfirming(true)
     try {
       // 1. Venta
@@ -286,34 +296,40 @@ export default function Vender() {
       const { error: eRpc } = await supabase.rpc('descontar_insumos_venta', { p_venta_id: venta.id })
       if (eRpc) throw eRpc
 
-      // 4. Puntos
+      // 4. Puntos. La venta (pasos 1-3) ya está registrada; si algo aquí falla NO
+      // reintentamos la venta (evita duplicarla), pero avisamos para corregir a mano.
       let puntosGanados = 0
       let nuevosTotales = clienteSeleccionado?.puntos_acumulados ?? 0
+      let puntosError = null
 
       if (clienteSeleccionado) {
         puntosGanados = Math.floor(total) // sobre total sin descuento
         nuevosTotales = clienteSeleccionado.puntos_acumulados + puntosGanados - puntosACanjear
 
-        await supabase.from('clientes').update({
+        const { error: eUpd } = await supabase.from('clientes').update({
           puntos_acumulados: nuevosTotales,
           visitas: clienteSeleccionado.visitas + 1,
         }).eq('id', clienteSeleccionado.id)
 
-        await supabase.from('puntos_historial').insert({
+        const { error: eHist } = await supabase.from('puntos_historial').insert({
           cliente_id: clienteSeleccionado.id,
           venta_id: venta.id,
           puntos: puntosGanados,
           concepto: 'compra',
         })
 
+        let eCanje = null
         if (puntosACanjear > 0) {
-          await supabase.from('puntos_historial').insert({
+          ({ error: eCanje } = await supabase.from('puntos_historial').insert({
             cliente_id: clienteSeleccionado.id,
             venta_id: venta.id,
             puntos: -puntosACanjear,
             concepto: 'canje',
-          })
+          }))
         }
+
+        const fallo = eUpd || eHist || eCanje
+        if (fallo) puntosError = fallo.message
       }
 
       // Mostrar resumen y limpiar
@@ -325,6 +341,9 @@ export default function Vender() {
         cliente: clienteSeleccionado,
         nuevosTotales,
       })
+      if (puntosError) {
+        setToastError(`Venta registrada, pero los puntos del cliente no se guardaron: ${puntosError}. Ajústalos en Clientes.`)
+      }
       setCarrito([])
       setNotas('')
       setMetodoPago('efectivo')

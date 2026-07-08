@@ -7,7 +7,6 @@ import { useAuth } from '../contexts/AuthContext'
 export default function Login() {
   const navigate = useNavigate()
   const { session } = useAuth()
-  const [mode, setMode] = useState('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -23,17 +22,12 @@ export default function Login() {
     setLoading(true)
     setMessage(null)
 
+    // Solo login. El alta de cajeros es por invitación del dueño (dashboard de Supabase);
+    // no hay auto-registro público — daría acceso total de lectura/escritura al negocio.
     try {
-      if (mode === 'login') {
-        const { error } = await supabase.auth.signInWithPassword({ email, password })
-        if (error) throw error
-        navigate('/vender', { replace: true })
-      } else {
-        const { error } = await supabase.auth.signUp({ email, password })
-        if (error) throw error
-        setMessage({ type: 'success', text: 'Cuenta creada. Revisa tu correo para confirmar.' })
-        setMode('login')
-      }
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) throw error
+      navigate('/vender', { replace: true })
     } catch (err) {
       setMessage({ type: 'error', text: err.message })
     } finally {
@@ -102,21 +96,12 @@ export default function Login() {
             disabled={loading}
             className="w-full bg-[#4E5B3D] hover:bg-[#3E4A30] disabled:opacity-60 text-[#FAFAF7] font-bold py-4 rounded-xl text-lg transition-colors min-h-[56px] mt-2"
           >
-            {loading ? 'Cargando...' : mode === 'login' ? 'Entrar' : 'Crear cuenta'}
+            {loading ? 'Cargando...' : 'Entrar'}
           </button>
         </form>
 
-        <p className="text-center mt-6 text-sm text-gray-500">
-          {mode === 'login' ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?'}{' '}
-          <button
-            onClick={() => {
-              setMode(mode === 'login' ? 'register' : 'login')
-              setMessage(null)
-            }}
-            className="text-[#4E5B3D] font-semibold hover:underline"
-          >
-            {mode === 'login' ? 'Registrarse' : 'Iniciar sesión'}
-          </button>
+        <p className="text-center mt-6 text-xs text-gray-400">
+          ¿Necesitas una cuenta? Pídela al administrador.
         </p>
       </div>
     </div>
